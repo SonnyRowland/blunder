@@ -1,0 +1,16 @@
+# Compiled output
+main
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# Personal files
+BACKLOG.md
