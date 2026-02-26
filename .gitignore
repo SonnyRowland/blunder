@@ -1,4 +1,5 @@
 # Compiled output
+main
 *.o
 *.obj
 *.a

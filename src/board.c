@@ -1,0 +1,130 @@
+#include "board.h"
+
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+Board fen_to_board(const char* fen);
+
+static const Piece fen_to_piece[128] = {
+  ['k'] = B_KING,
+  ['q'] = B_QUEEN,
+  ['r'] = B_ROOK,
+  ['b'] = B_BISHOP,
+  ['n'] = B_KNIGHT,
+  ['p'] = B_PAWN,
+  ['P'] = W_PAWN,
+  ['N'] = W_KNIGHT,
+  ['B'] = W_BISHOP,
+  ['R'] = W_ROOK,
+  ['Q'] = W_QUEEN,
+  ['K'] = W_KING,
+};
+
+static const char* piece_to_unicode(Piece p) {
+  switch (p) {
+    case W_KING:   return "\u2654";
+    case W_QUEEN:  return "\u2655";
+    case W_ROOK:   return "\u2656";
+    case W_BISHOP: return "\u2657";
+    case W_KNIGHT: return "\u2658";
+    case W_PAWN:   return "\u2659";
+    case B_KING:   return "\u265A";
+    case B_QUEEN:  return "\u265B";
+    case B_ROOK:   return "\u265C";
+    case B_BISHOP: return "\u265D";
+    case B_KNIGHT: return "\u265E";
+    case B_PAWN:   return "\u265F";
+    default: return " ";
+  }
+}
+
+Board fen_to_board(const char* fen){
+  Board board;
+  int fen_length = strlen(fen);
+
+  int rank = 7;
+  int file = 0;
+  int emptySquares;
+  int i = 0;
+
+  // Fill grid with pieces
+  for(; i < fen_length; i++)
+  {
+    if(fen[i] == ' ') break;
+
+    if (fen[i] > 65)
+    {
+      board.grid[rank][file] = fen_to_piece[fen[i]];
+      file++;
+    }
+    else if (47 < fen[i] && fen[i] < 65)
+    {
+      emptySquares = fen[i] - '0';
+
+      for (int j = 0; j < emptySquares; j++)
+      {
+        board.grid[rank][file] = EMPTY;
+        file++;
+      }
+    }
+    else
+    {
+      rank--;
+      file = 0;
+    }
+  }
+
+  // Extract game meta data (turn, castling rights, move count etc.)
+  board.turn = (fen[++i] == 'w');
+  i++;
+
+  board.castle_wk = board.castle_wq = board.castle_bk = board.castle_bq = 0;
+
+  if (fen[i++] != '-')
+  {
+    while(fen[i] != ' ')
+    {
+      switch (fen[i])
+      { 
+        case 'K': board.castle_wk = 1;
+        case 'Q': board.castle_wq = 1;
+        case 'k': board.castle_bk = 1;
+        case 'q': board.castle_bq = 1;
+        default: break;
+      }
+      i++;
+    }
+  }
+
+  // Google en passant
+  if (fen[++i] != '-')
+  {
+    board.ep_file = fen[i] - 'a';
+    board.ep_rank = fen[++i] - '0';
+  }
+  else
+  {
+    board.ep_file = board.ep_rank = -1;
+  }
+
+  return board;
+}
+
+void print_grid(Board board){
+  for (int rank = 7; rank >= 0; rank--)
+  {
+    for (int file = 0; file < 8; file++)
+    {
+      if (board.grid[rank][file] == EMPTY)
+      {
+        printf(" ");
+      }
+      else
+      {
+        printf("%s", piece_to_unicode(board.grid[rank][file]));
+      }
+    }
+    printf("\n");
+  }
+}
