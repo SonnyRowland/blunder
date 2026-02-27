@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 
 Board fen_to_board(const char* fen);
 
@@ -102,10 +103,30 @@ Board fen_to_board(const char* fen){
   {
     board.ep_file = fen[i] - 'a';
     board.ep_rank = fen[++i] - '0';
+    printf("fen ++i neq -\n");
   }
   else
   {
     board.ep_file = board.ep_rank = -1;
+  }
+
+  i++;
+
+  board.halfmove_clock = fen[++i] - '0';
+
+  if (fen[++i] != ' ')
+  {
+    board.halfmove_clock = (10 * board.halfmove_clock) + (fen[i++] - '0');
+  }
+
+  i++;
+
+  board.fullmove_count = 0;
+
+  while (fen_length - i > 0)
+  {
+    board.fullmove_count += pow(10, fen_length - i - 1) * (fen[i] - '0');
+    i++;
   }
 
   return board;
@@ -127,4 +148,15 @@ void print_grid(Board board){
     }
     printf("\n");
   }
+  board.turn ? printf("White to play\n") : printf("Black to play\n");
+  if (board.castle_wk) printf("White can castle kingside\n");
+  if (board.castle_wq) printf("White can castle queenside\n");
+  if (board.castle_bk) printf("Black can castle kingside\n");
+  if (board.castle_bq) printf("Black can castle queenside\n");
+  if (board.ep_file != -1)
+  {
+    printf("En passant available on %c%i\n", ('a' + board.ep_file), board.ep_rank);
+  }
+  printf("Halfmove clock: %i\n", board.halfmove_clock);
+  printf("Fullmove count: %i\n", board.fullmove_count);
 }
