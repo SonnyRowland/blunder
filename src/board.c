@@ -88,10 +88,10 @@ Board fen_to_board(const char* fen){
     {
       switch (fen[i])
       { 
-        case 'K': board.castle_wk = 1;
-        case 'Q': board.castle_wq = 1;
-        case 'k': board.castle_bk = 1;
-        case 'q': board.castle_bq = 1;
+        case 'K': board.castle_wk = 1; break;
+        case 'Q': board.castle_wq = 1; break;
+        case 'k': board.castle_bk = 1; break;
+        case 'q': board.castle_bq = 1; break;
         default: break;
       }
       i++;
