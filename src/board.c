@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
 
 Board fen_to_board(const char* fen);
 
@@ -20,6 +21,23 @@ static const Piece fen_to_piece[128] = {
   ['R'] = W_ROOK,
   ['Q'] = W_QUEEN,
   ['K'] = W_KING,
+};
+
+// Offset by 6 for non negative array indexing
+static const char piece_to_fen[13] = {
+    [B_KING   + 6] = 'k',
+    [B_QUEEN  + 6] = 'q',
+    [B_ROOK   + 6] = 'r',
+    [B_BISHOP + 6] = 'b',
+    [B_KNIGHT + 6] = 'n',
+    [B_PAWN   + 6] = 'p',
+    [EMPTY    + 6] = '.',
+    [W_PAWN   + 6] = 'P',
+    [W_KNIGHT + 6] = 'N',
+    [W_BISHOP + 6] = 'B',
+    [W_ROOK   + 6] = 'R',
+    [W_QUEEN  + 6] = 'Q',
+    [W_KING   + 6] = 'K',
 };
 
 static const char* piece_to_unicode(Piece p) {
@@ -130,6 +148,81 @@ Board fen_to_board(const char* fen){
   }
 
   return board;
+}
+
+void board_to_fen(Board board, char* fen)
+{
+  int emptyCounter = 0;
+  int fenPointer = 0;
+
+  for (int i = 7; i >= 0; i--)
+  {
+    for (int j = 0; j < 8; j++)
+    {
+      // Flush emptyCounter on first rank and write to FEN string
+      if (j == 0 && i != 7) 
+      {
+        if (emptyCounter)
+        {
+          fen[fenPointer++] = (char)('0' + emptyCounter);
+          emptyCounter = 0;
+        }
+        fen[fenPointer++] = '/';
+      }
+
+      if (board.grid[i][j] == EMPTY)
+      {
+        emptyCounter++;
+      }
+      else
+      {
+        if(emptyCounter)
+        {
+          fen[fenPointer++] = (char)('0' + emptyCounter);
+          emptyCounter = 0;
+        }
+        fen[fenPointer++] = piece_to_fen[board.grid[i][j] + 6];
+      }
+    }
+  }
+
+  // Write game meta data to FEN string
+  fen[fenPointer++] = ' ';
+
+  if (board.turn == 1)
+  {
+    fen[fenPointer++] = 'w';
+  }
+  else
+  {
+    fen[fenPointer++] = 'b';
+  }
+
+  fen[fenPointer++] = ' ';
+
+  if (board.castle_wk) fen[fenPointer++] = 'K';
+  if (board.castle_wq) fen[fenPointer++] = 'Q';
+  if (board.castle_bk) fen[fenPointer++] = 'k';
+  if (board.castle_bq) fen[fenPointer++] = 'q';
+
+  fen[fenPointer++] = ' ';
+
+  if (board.ep_file == -1)
+  {
+    fen[fenPointer++] = '-';
+  }
+  else
+  {
+    fen[fenPointer++] = (char)(board.ep_file + 'a');
+    fen[fenPointer++] = (char)('0' + board.ep_rank);
+  }
+
+  fen[fenPointer++] = ' ';
+
+  fenPointer += sprintf(&fen[fenPointer], "%d", board.halfmove_clock);
+  fen[fenPointer++] = ' ';
+  fenPointer += sprintf(&fen[fenPointer], "%d", board.fullmove_count);
+  fen[fenPointer++] = '\0';
 }
 
 void print_grid(Board board){
