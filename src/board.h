@@ -22,8 +22,4 @@ typedef struct {
   int fullmove_count;
 } Board;
 
-Board fen_to_board(const char* fen);
-void board_to_fen(Board board, char* fen);
-void print_grid(Board board);
-
 #endif
