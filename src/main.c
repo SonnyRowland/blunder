@@ -1,5 +1,6 @@
 #include "board.h"
 #include "display.h"
+#include "fen.h"
 
 #include <stdio.h>
 
