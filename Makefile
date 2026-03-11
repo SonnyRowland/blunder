@@ -1,6 +1,6 @@
 TARGET = blunder
 
-SRCS = src/main.c src/fen.c src/display.c
+SRCS = src/main.c src/fen.c src/display.c src/move.c
 
 all: $(TARGET)
 
