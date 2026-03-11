@@ -6,3 +6,14 @@ all: $(TARGET)
 
 $(TARGET): $(SRCS)
 	cc -o $(TARGET) $(SRCS)
+
+UNITY = unity/unity.c
+TEST_SRCS = src/fen.c src/display.c
+
+.PHONY: test
+test:
+	@for f in tests/test_*.c; do \
+		bin=$$(basename $$f .c); \
+		cc -Isrc -Iunity -o tests/$$bin $$f $(TEST_SRCS) $(UNITY) && \
+		./tests/$$bin; \
+	done
