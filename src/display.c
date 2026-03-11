@@ -36,7 +36,14 @@ void print_grid(Board board){
     }
     printf("\n");
   }
-  board.turn ? printf("White to play\n") : printf("Black to play\n");
+  if (board.turn == 1)
+  {
+    printf("White to play\n");
+  }
+  else
+  {
+    printf("Black to play\n");
+  }
   if (board.castle_wk) printf("White can castle kingside\n");
   if (board.castle_wq) printf("White can castle queenside\n");
   if (board.castle_bk) printf("Black can castle kingside\n");

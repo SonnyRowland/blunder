@@ -73,7 +73,14 @@ Board fen_to_board(const char* fen){
   }
 
   // Extract game meta data (turn, castling rights, move count etc.)
-  board.turn = (fen[++i] == 'w');
+  if (fen[++i] == 'w')
+  {
+    board.turn = 1;
+  }
+  else
+  {
+    board.turn = -1;
+  }
   i++;
 
   board.castle_wk = board.castle_wq = board.castle_bk = board.castle_bq = 0;
