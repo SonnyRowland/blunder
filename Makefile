@@ -17,3 +17,7 @@ test:
 		cc -Isrc -Iunity -o tests/$$bin $$f $(TEST_SRCS) $(UNITY) && \
 		./tests/$$bin; \
 	done
+
+.PHONY: format
+format:
+	clang-format --style=WebKit -i $(SRCS)
