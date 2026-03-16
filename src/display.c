@@ -46,22 +46,24 @@ void print_grid(Board board)
         }
         printf("\n");
     }
-    if (board.turn == 1) {
-        printf("White to play\n");
-    } else {
-        printf("Black to play\n");
-    }
-    if (board.castle_wk)
-        printf("White can castle kingside\n");
-    if (board.castle_wq)
-        printf("White can castle queenside\n");
-    if (board.castle_bk)
-        printf("Black can castle kingside\n");
-    if (board.castle_bq)
-        printf("Black can castle queenside\n");
-    if (board.ep_file != -1) {
-        printf("En passant available on %c%i\n", ('a' + board.ep_file), board.ep_rank);
-    }
-    printf("Halfmove clock: %i\n", board.halfmove_clock);
-    printf("Fullmove count: %i\n", board.fullmove_count);
+    printf("\n");
+  if (board.turn == 1)
+  {
+    printf("White to play\n");
+  }
+  else
+  {
+    printf("Black to play\n");
+  }
+  if (board.castle_wk) printf("White can castle kingside\n");
+  if (board.castle_wq) printf("White can castle queenside\n");
+  if (board.castle_bk) printf("Black can castle kingside\n");
+  if (board.castle_bq) printf("Black can castle queenside\n");
+  if (board.ep_file != -1)
+  {
+    printf("En passant available on %c%i\n", ('a' + board.ep_file), board.ep_rank);
+  }
+  printf("Halfmove clock: %i\n", board.halfmove_clock);
+  printf("Fullmove count: %i\n", board.fullmove_count);
+  printf("---------------------------\n");
 }
