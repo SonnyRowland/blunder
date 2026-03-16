@@ -11,10 +11,16 @@ int main(){
     3,7,3,4,
   };
 
+  Move move2 = {
+    0,4,1,4,
+  };
+
   print_grid(board);
 
   board = apply_move(board, move);
+  print_grid(board);
   
+  board = apply_move(board, move2);
   print_grid(board);
 
   return 0;

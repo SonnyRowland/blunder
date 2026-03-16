@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+static Board move_piece(Board board, Move move);
 bool is_piece_move_valid(Piece piece, Move move);
 bool is_square_on_board(Move move);
 bool is_player_in_check(Board board);
@@ -44,13 +45,36 @@ Board apply_move(Board board, Move move)
     return board;
   }
 
-  // TODO: Validate player is not in check
-  
+  // Ensure player is not in check
+  Board temp_board = move_piece(board, move);
+  temp_board.turn *= -1;
+  if (is_player_in_check(temp_board))
+  {
+    printf("Move would leave king in check...\n");
+    return board;
+  }
+
   printf("Move is legal...\n");
+  return move_piece(board, move); 
+}
+
+static Board move_piece(Board board, Move move)
+{
+  Piece moving_piece = board.grid[move.from_rank][move.from_file];
+
+  bool is_capture = board.grid[move.to_rank][move.from_rank] != EMPTY;
+  bool is_pawn_move = moving_piece == W_PAWN || moving_piece == B_PAWN;
 
   board.grid[move.to_rank][move.to_file] = board.grid[move.from_rank][move.from_file];
   board.grid[move.from_rank][move.from_file] = EMPTY;
   board.turn *= -1;
+  board.fullmove_count++;
+
+  if (is_capture || is_pawn_move) {
+    board.halfmove_clock = 0;
+  } else {
+    board.halfmove_clock++;
+  }
 
   return board;
 }
@@ -171,6 +195,7 @@ bool is_player_in_check(Board board)
     }
   }
 
+  // Search all opponent pieces for potential checking piece
   for (int i = 0; i < 8; i++)
   {
     for (int j = 0; j < 8; j++)
@@ -183,7 +208,6 @@ bool is_player_in_check(Board board)
 
         
         if (is_piece_move_valid(board.grid[i][j], temp_move)){ 
-          printf("checking piece: %i\n", board.grid[i][j]);
           return true;
         };
       }
