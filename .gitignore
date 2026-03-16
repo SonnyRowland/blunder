@@ -12,6 +12,7 @@ blunder
 *.exe
 *.out
 *.app
-
+tests/test_*
+!tests/test_*.c 
 # Personal files
 BACKLOG.md
