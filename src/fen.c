@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "board.h"
 
@@ -53,10 +54,10 @@ Board fen_to_board(const char* fen)
         if (fen[i] == ' ')
             break;
 
-        if (fen[i] > 65) {
+        if (fen[i] >= 'A') {
             board.grid[rank][file] = fen_to_piece[fen[i]];
             file++;
-        } else if (47 < fen[i] && fen[i] < 65) {
+        } else if ('/' < fen[i] && fen[i] < 'A') {
             emptySquares = fen[i] - '0';
 
             for (int j = 0; j < emptySquares; j++) {
@@ -168,14 +169,26 @@ void board_to_fen(Board board, char* fen)
 
     fen[fenPointer++] = ' ';
 
-    if (board.castle_wk)
+    bool no_castling_rights = true;
+
+    if (board.castle_wk) {
         fen[fenPointer++] = 'K';
-    if (board.castle_wq)
+        no_castling_rights = false;
+    }
+    if (board.castle_wq) {
         fen[fenPointer++] = 'Q';
-    if (board.castle_bk)
+        no_castling_rights = false;
+    }
+    if (board.castle_bk) {
         fen[fenPointer++] = 'k';
-    if (board.castle_bq)
+        no_castling_rights = false;
+    }
+    if (board.castle_bq) {
         fen[fenPointer++] = 'q';
+        no_castling_rights = false;
+    }
+
+    if (no_castling_rights) fen[fenPointer++] = '-';
 
     fen[fenPointer++] = ' ';
 
