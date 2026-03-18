@@ -5,7 +5,4 @@
 
 #include <stdio.h>
 
-int main(){
-  Board board = get_start_pos();
-  print_grid(board);
-}
+int main(){}
