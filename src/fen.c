@@ -4,6 +4,8 @@
 
 #include "board.h"
 
+char start_pos[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 static const Piece fen_to_piece[128] = {
     ['k'] = B_KING,
     ['q'] = B_QUEEN,
