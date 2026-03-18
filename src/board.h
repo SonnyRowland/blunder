@@ -22,4 +22,6 @@ typedef struct {
   int fullmove_count;
 } Board;
 
+Board get_start_pos(void);
+
 #endif
