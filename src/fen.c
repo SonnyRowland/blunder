@@ -1,7 +1,7 @@
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 
 #include "board.h"
 
@@ -188,7 +188,8 @@ void board_to_fen(Board board, char* fen)
         no_castling_rights = false;
     }
 
-    if (no_castling_rights) fen[fenPointer++] = '-';
+    if (no_castling_rights)
+        fen[fenPointer++] = '-';
 
     fen[fenPointer++] = ' ';
 
