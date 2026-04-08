@@ -216,4 +216,162 @@ bool is_player_in_check(Board board)
     return false;
 }
 
+MoveList generate_legal_moves(Board board)
+{
+    MoveList move_list;
+    int count = 0;
+
+    // TODO: use rank_idx, file_idx in each switch instead of piece specific ones
+
+    for (int rank = 0; rank < 8; rank++) {
+        for (int file = 0; file < 8; file++) {
+            Piece piece = board.grid[rank][file];
+
+            // Process white and black pieces in same switch statement
+            int piece_abs = abs((int)piece);
+            int rank_idx, file_idx;
+
+            if (piece == EMPTY)
+                continue;
+
+            Move temp_move;
+
+            switch (piece_abs) {
+            // Deal with pawn case
+            case (1):
+                // TODO: Deal with taking pieces
+                // TODO: Deal with taking piece en passant
+                // TODO: Deal with pieces only moving 2 on first go
+                {
+                    int pawn_rank = rank + (int)piece;
+                    if (pawn_rank >= 0 && pawn_rank < 8 && board.grid[pawn_rank][file] == EMPTY) {
+                        temp_move = (Move) { rank, file, pawn_rank, file };
+                        move_list.moves[count++] = temp_move;
+
+                        int pawn_rank2 = rank + ((int)piece * 2);
+                        if (pawn_rank2 >= 0 && pawn_rank2 < 8 && board.grid[pawn_rank2][file] == EMPTY) {
+                            temp_move = (Move) { rank, file, pawn_rank2, file };
+                            move_list.moves[count++] = temp_move;
+                        }
+                    }
+                    break;
+                }
+            // Deal with knight case
+            case (2):
+                for (int knight_rank = rank - 2; knight_rank <= rank + 2; knight_rank++) {
+                    if (knight_rank < 0 || knight_rank > 7)
+                        continue;
+                    if (knight_rank == rank)
+                        continue;
+
+                    for (int knight_file = file - 2; knight_file <= file + 2; knight_file++) {
+                        if (knight_file < 0 || knight_file > 7)
+                            continue;
+                        if (abs(knight_rank - rank) == abs(knight_file - file))
+                            continue;
+                        if (knight_file == file)
+                            continue;
+                        if (board.grid[knight_rank][knight_file] == EMPTY) {
+                            temp_move = (Move) { rank, file, knight_rank, knight_file };
+                            move_list.moves[count++] = temp_move;
+                        }
+                    }
+                }
+                break;
+            // Let queen case fall through to both bishop and rook cases
+            case (5):
+            // Deal with bishop case
+            case (3):
+                // TODO: Deal with taking pieces
+                rank_idx = rank + 1;
+                file_idx = file + 1;
+                while (rank_idx < 8 && file_idx < 8 && board.grid[rank_idx][file_idx] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank_idx, file_idx };
+                    move_list.moves[count++] = temp_move;
+                    rank_idx++;
+                    file_idx++;
+                }
+                rank_idx = rank + 1;
+                file_idx = file - 1;
+                while (rank_idx < 8 && file_idx >= 0 && board.grid[rank_idx][file_idx] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank_idx, file_idx };
+                    move_list.moves[count++] = temp_move;
+                    rank_idx++;
+                    file_idx--;
+                }
+                rank_idx = rank - 1;
+                file_idx = file + 1;
+                while (rank_idx >= 0 && file_idx < 8 && board.grid[rank_idx][file_idx] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank_idx, file_idx };
+                    move_list.moves[count++] = temp_move;
+                    rank_idx--;
+                    file_idx++;
+                }
+                rank_idx = rank - 1;
+                file_idx = file - 1;
+                while (rank_idx >= 0 && file_idx >= 0 && board.grid[rank_idx][file_idx] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank_idx, file_idx };
+                    move_list.moves[count++] = temp_move;
+                    rank_idx--;
+                    file_idx--;
+                }
+            // Deal with rook case
+            case (4):
+                // Prevent bishop case from falling through, let queen case through
+                if (piece_abs == 3)
+                    break;
+                file_idx = file + 1;
+                while (file_idx < 8 && board.grid[rank][file_idx] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank, file_idx };
+                    move_list.moves[count++] = temp_move;
+                    file_idx++;
+                }
+                file_idx = file - 1;
+                while (file_idx >= 0 && board.grid[rank][file_idx] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank, file_idx };
+                    move_list.moves[count++] = temp_move;
+                    file_idx--;
+                }
+                rank_idx = rank + 1;
+                while (rank_idx < 8 && board.grid[rank_idx][file] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank_idx, file };
+                    move_list.moves[count++] = temp_move;
+                    rank_idx++;
+                }
+                rank_idx = rank - 1;
+                while (rank_idx >= 0 && board.grid[rank_idx][file] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank_idx, file };
+                    move_list.moves[count++] = temp_move;
+                    rank_idx--;
+                }
+                break;
+            // Deal with king case
+            case (6):
+                for (int king_rank = rank - 1; king_rank <= rank + 1; king_rank++) {
+                    if (king_rank < 0 || king_rank > 7)
+                        continue;
+                    for (int king_file = file - 1; king_file <= file + 1; king_file++) {
+                        if (king_file < 0 || king_file > 7)
+                            continue;
+                        if (king_file == file && king_rank == rank)
+                            continue;
+                        if (board.grid[king_rank][king_file] == EMPTY) {
+                            temp_move = (Move) { rank, file, king_rank, king_file };
+                            move_list.moves[count++] = temp_move;
+                        }
+                    }
+                }
+                break;
+            default:
+                printf("no piece\n");
+            }
+        }
+    }
+
+    move_list.count = count;
+    return move_list;
+}
+
+// TODO: Implement separate functions for generating each piece moves so queen can be combination of bishop and rook
+
 // TODO: Implement some illegal move function with violation code that handles illegal moves properly

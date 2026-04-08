@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "board.h"
+#include "move.h"
 
 static const char* piece_to_unicode(Piece p)
 {
@@ -66,4 +67,11 @@ void print_grid(Board board)
     printf("Halfmove clock: %i\n", board.halfmove_clock);
     printf("Fullmove count: %i\n", board.fullmove_count);
     printf("---------------------------\n");
+}
+
+void print_movelist(MoveList moveList)
+{
+    for (int i = 0; i < moveList.count; i++) {
+        printf("{%i, %i, %i, %i}\n", moveList.moves[i].from_rank, moveList.moves[i].from_file, moveList.moves[i].to_rank, moveList.moves[i].to_file);
+    }
 }
