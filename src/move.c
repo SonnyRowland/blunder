@@ -221,8 +221,6 @@ MoveList generate_legal_moves(Board board)
     MoveList move_list;
     int count = 0;
 
-    // TODO: use rank_idx, file_idx in each switch instead of piece specific ones
-
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
             Piece piece = board.grid[rank][file];
@@ -243,14 +241,14 @@ MoveList generate_legal_moves(Board board)
                 // TODO: Deal with taking piece en passant
                 // TODO: Deal with pieces only moving 2 on first go
                 {
-                    int pawn_rank = rank + (int)piece;
-                    if (pawn_rank >= 0 && pawn_rank < 8 && board.grid[pawn_rank][file] == EMPTY) {
-                        temp_move = (Move) { rank, file, pawn_rank, file };
+                    rank_idx = rank + (int)piece;
+                    if (rank_idx >= 0 && rank_idx < 8 && board.grid[rank_idx][file] == EMPTY) {
+                        temp_move = (Move) { rank, file, rank_idx, file };
                         move_list.moves[count++] = temp_move;
 
-                        int pawn_rank2 = rank + ((int)piece * 2);
-                        if (pawn_rank2 >= 0 && pawn_rank2 < 8 && board.grid[pawn_rank2][file] == EMPTY) {
-                            temp_move = (Move) { rank, file, pawn_rank2, file };
+                        rank_idx = rank + ((int)piece * 2);
+                        if (rank_idx >= 0 && rank_idx < 8 && board.grid[rank_idx][file] == EMPTY) {
+                            temp_move = (Move) { rank, file, rank_idx, file };
                             move_list.moves[count++] = temp_move;
                         }
                     }
@@ -258,21 +256,21 @@ MoveList generate_legal_moves(Board board)
                 }
             // Deal with knight case
             case (2):
-                for (int knight_rank = rank - 2; knight_rank <= rank + 2; knight_rank++) {
-                    if (knight_rank < 0 || knight_rank > 7)
+                for (rank_idx = rank - 2; rank_idx <= rank + 2; rank_idx++) {
+                    if (rank_idx < 0 || rank_idx > 7)
                         continue;
-                    if (knight_rank == rank)
+                    if (rank_idx == rank)
                         continue;
 
-                    for (int knight_file = file - 2; knight_file <= file + 2; knight_file++) {
-                        if (knight_file < 0 || knight_file > 7)
+                    for (file_idx = file - 2; file_idx <= file + 2; file_idx++) {
+                        if (file_idx < 0 || file_idx > 7)
                             continue;
-                        if (abs(knight_rank - rank) == abs(knight_file - file))
+                        if (abs(rank_idx - rank) == abs(file_idx - file))
                             continue;
-                        if (knight_file == file)
+                        if (file_idx == file)
                             continue;
-                        if (board.grid[knight_rank][knight_file] == EMPTY) {
-                            temp_move = (Move) { rank, file, knight_rank, knight_file };
+                        if (board.grid[rank_idx][file_idx] == EMPTY) {
+                            temp_move = (Move) { rank, file, rank_idx, file_idx };
                             move_list.moves[count++] = temp_move;
                         }
                     }
@@ -347,16 +345,16 @@ MoveList generate_legal_moves(Board board)
                 break;
             // Deal with king case
             case (6):
-                for (int king_rank = rank - 1; king_rank <= rank + 1; king_rank++) {
-                    if (king_rank < 0 || king_rank > 7)
+                for (rank_idx = rank - 1; rank_idx <= rank + 1; rank_idx++) {
+                    if (rank_idx < 0 || rank_idx > 7)
                         continue;
-                    for (int king_file = file - 1; king_file <= file + 1; king_file++) {
-                        if (king_file < 0 || king_file > 7)
+                    for (file_idx = file - 1; file_idx <= file + 1; file_idx++) {
+                        if (file_idx < 0 || file_idx > 7)
                             continue;
-                        if (king_file == file && king_rank == rank)
+                        if (file_idx == file && rank_idx == rank)
                             continue;
-                        if (board.grid[king_rank][king_file] == EMPTY) {
-                            temp_move = (Move) { rank, file, king_rank, king_file };
+                        if (board.grid[rank_idx][file_idx] == EMPTY) {
+                            temp_move = (Move) { rank, file, rank_idx, file_idx };
                             move_list.moves[count++] = temp_move;
                         }
                     }
