@@ -10,7 +10,13 @@ typedef struct {
   int to_rank, to_file;
 } Move;
 
+typedef struct {
+  Move moves[256];
+  int count;
+} MoveList;
+
 Board apply_move(Board board, Move move);
 bool is_player_in_check(Board board);
+MoveList generate_legal_moves(Board board);
 
 #endif
