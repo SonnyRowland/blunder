@@ -8,7 +8,7 @@ $(TARGET): $(SRCS)
 	cc -o $(TARGET) $(SRCS)
 
 UNITY = unity/unity.c
-TEST_SRCS = src/fen.c src/display.c
+TEST_SRCS = src/fen.c src/display.c src/move.c src/board.c
 
 .PHONY: test
 test:

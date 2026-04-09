@@ -5,9 +5,9 @@
 
 #include <stdio.h>
 
-int main()
+int main(void)
 {
-    Board board = fen_to_board("8/8/8/4n3/8/8/8/8 w - - 0 1");
+    Board board = fen_to_board("8/8/8/4Q3/8/8/8/8 w - - 0 1");
     MoveList move_list = generate_legal_moves(board);
 
     print_grid(board);

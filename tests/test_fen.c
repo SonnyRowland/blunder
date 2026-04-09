@@ -1,6 +1,7 @@
+#include <string.h>
+
 #include "unity.h"
 #include "fen.h"
-#include <string.h>
 
 void setUp(void) {}
 void tearDown(void) {}
