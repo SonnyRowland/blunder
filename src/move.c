@@ -218,6 +218,8 @@ bool is_player_in_check(Board board)
 
 MoveList generate_legal_moves(Board board)
 {
+
+    // TODO: Take into account whose turn it is... reduce search
     MoveList move_list;
     int count = 0;
 
