@@ -227,6 +227,9 @@ MoveList generate_legal_moves(Board board)
         for (int file = 0; file < 8; file++) {
             Piece piece = board.grid[rank][file];
 
+            if ((piece * board.turn) < 0)
+                continue;
+
             // Process white and black pieces in same switch statement
             int piece_abs = abs((int)piece);
             int rank_idx, file_idx;
@@ -282,36 +285,43 @@ MoveList generate_legal_moves(Board board)
             case (5):
             // Deal with bishop case
             case (3):
-                // TODO: Deal with taking pieces
                 rank_idx = rank + 1;
                 file_idx = file + 1;
-                while (rank_idx < 8 && file_idx < 8 && board.grid[rank_idx][file_idx] == EMPTY) {
+                while (rank_idx < 8 && file_idx < 8 && (board.grid[rank_idx][file_idx] * board.turn) <= 0) {
                     temp_move = (Move) { rank, file, rank_idx, file_idx };
                     move_list.moves[count++] = temp_move;
+                    if (board.grid[rank_idx][file_idx] != EMPTY)
+                        break;
                     rank_idx++;
                     file_idx++;
                 }
                 rank_idx = rank + 1;
                 file_idx = file - 1;
-                while (rank_idx < 8 && file_idx >= 0 && board.grid[rank_idx][file_idx] == EMPTY) {
+                while (rank_idx < 8 && file_idx >= 0 && (board.grid[rank_idx][file_idx] * board.turn) <= 0) {
                     temp_move = (Move) { rank, file, rank_idx, file_idx };
                     move_list.moves[count++] = temp_move;
+                    if (board.grid[rank_idx][file_idx] != EMPTY)
+                        break;
                     rank_idx++;
                     file_idx--;
                 }
                 rank_idx = rank - 1;
                 file_idx = file + 1;
-                while (rank_idx >= 0 && file_idx < 8 && board.grid[rank_idx][file_idx] == EMPTY) {
+                while (rank_idx >= 0 && file_idx < 8 && (board.grid[rank_idx][file_idx] * board.turn) <= 0) {
                     temp_move = (Move) { rank, file, rank_idx, file_idx };
                     move_list.moves[count++] = temp_move;
+                    if (board.grid[rank_idx][file_idx] != EMPTY)
+                        break;
                     rank_idx--;
                     file_idx++;
                 }
                 rank_idx = rank - 1;
                 file_idx = file - 1;
-                while (rank_idx >= 0 && file_idx >= 0 && board.grid[rank_idx][file_idx] == EMPTY) {
+                while (rank_idx >= 0 && file_idx >= 0 && (board.grid[rank_idx][file_idx] * board.turn) <= 0) {
                     temp_move = (Move) { rank, file, rank_idx, file_idx };
                     move_list.moves[count++] = temp_move;
+                    if (board.grid[rank_idx][file_idx] != EMPTY)
+                        break;
                     rank_idx--;
                     file_idx--;
                 }
@@ -321,27 +331,35 @@ MoveList generate_legal_moves(Board board)
                 if (piece_abs == 3)
                     break;
                 file_idx = file + 1;
-                while (file_idx < 8 && board.grid[rank][file_idx] == EMPTY) {
+                while (file_idx < 8 && (board.grid[rank][file_idx] * board.turn) <= 0) {
                     temp_move = (Move) { rank, file, rank, file_idx };
                     move_list.moves[count++] = temp_move;
+                    if (board.grid[rank][file_idx] != EMPTY)
+                        break;
                     file_idx++;
                 }
                 file_idx = file - 1;
-                while (file_idx >= 0 && board.grid[rank][file_idx] == EMPTY) {
+                while (file_idx >= 0 && (board.grid[rank][file_idx] * board.turn) <= 0) {
                     temp_move = (Move) { rank, file, rank, file_idx };
                     move_list.moves[count++] = temp_move;
+                    if (board.grid[rank][file_idx] != EMPTY)
+                        break;
                     file_idx--;
                 }
                 rank_idx = rank + 1;
-                while (rank_idx < 8 && board.grid[rank_idx][file] == EMPTY) {
+                while (rank_idx < 8 && (board.grid[rank_idx][file] * board.turn) <= 0) {
                     temp_move = (Move) { rank, file, rank_idx, file };
                     move_list.moves[count++] = temp_move;
+                    if (board.grid[rank_idx][file] != EMPTY)
+                        break;
                     rank_idx++;
                 }
                 rank_idx = rank - 1;
-                while (rank_idx >= 0 && board.grid[rank_idx][file] == EMPTY) {
+                while (rank_idx >= 0 && (board.grid[rank_idx][file] * board.turn) <= 0) {
                     temp_move = (Move) { rank, file, rank_idx, file };
                     move_list.moves[count++] = temp_move;
+                    if (board.grid[rank_idx][file] != EMPTY)
+                        break;
                     rank_idx--;
                 }
                 break;
