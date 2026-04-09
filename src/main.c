@@ -7,7 +7,7 @@
 
 int main(void)
 {
-    Board board = fen_to_board("8/8/8/4Q3/8/8/8/8 w - - 0 1");
+    Board board = fen_to_board("7P/2R5/8/4b3/5N2/8/1Q6/8 b - - 0 1");
     MoveList move_list = generate_legal_moves(board);
 
     print_grid(board);
