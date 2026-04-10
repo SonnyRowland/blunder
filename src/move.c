@@ -299,7 +299,7 @@ MoveList generate_legal_moves(Board board)
                             continue;
                         if (file_idx == file)
                             continue;
-                        if (board.grid[rank_idx][file_idx] == EMPTY) {
+                        if ((board.grid[rank_idx][file_idx] * piece) <= 0) {
                             temp_move = (Move) { rank, file, rank_idx, file_idx };
                             move_list.moves[count++] = temp_move;
                         }
@@ -398,7 +398,7 @@ MoveList generate_legal_moves(Board board)
                             continue;
                         if (file_idx == file && rank_idx == rank)
                             continue;
-                        if (board.grid[rank_idx][file_idx] == EMPTY) {
+                        if ((board.grid[rank_idx][file_idx] * piece) <= 0) {
                             temp_move = (Move) { rank, file, rank_idx, file_idx };
                             move_list.moves[count++] = temp_move;
                         }
