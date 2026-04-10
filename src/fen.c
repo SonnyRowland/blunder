@@ -105,7 +105,7 @@ Board fen_to_board(const char* fen)
     // Google en passant
     if (fen[++i] != '-') {
         board.ep_file = fen[i] - 'a';
-        board.ep_rank = fen[++i] - '0';
+        board.ep_rank = fen[++i] - '1';
     } else {
         board.ep_file = board.ep_rank = -1;
     }
@@ -197,7 +197,7 @@ void board_to_fen(Board board, char* fen)
         fen[fenPointer++] = '-';
     } else {
         fen[fenPointer++] = (char)(board.ep_file + 'a');
-        fen[fenPointer++] = (char)('0' + board.ep_rank);
+        fen[fenPointer++] = (char)('1' + board.ep_rank);
     }
 
     fen[fenPointer++] = ' ';

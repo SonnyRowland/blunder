@@ -61,7 +61,7 @@ void print_grid(Board board)
     if (board.castle_bq)
         printf("Black can castle queenside\n");
     if (board.ep_file != -1) {
-        printf("En passant available on %c%i\n", ('a' + board.ep_file), board.ep_rank);
+        printf("En passant available on %c%i\n", ('a' + board.ep_file), board.ep_rank + 1);
     }
     printf("Halfmove clock: %i\n", board.halfmove_clock);
     printf("Fullmove count: %i\n", board.fullmove_count);

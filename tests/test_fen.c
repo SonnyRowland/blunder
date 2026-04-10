@@ -21,11 +21,17 @@ void test_starting_position_round_trip(void)
   TEST_ASSERT_TRUE(fen_round_trip(fen));
 }
 
+void test_en_passant_round_trip(void) {
+  const char* fen = "rnbqkbnr/1pp1pppp/p7/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3";
+  TEST_ASSERT_TRUE(fen_round_trip(fen));
+}
+
 int main(void)
 {
   UNITY_BEGIN();
 
   RUN_TEST(test_starting_position_round_trip);
+  RUN_TEST(test_en_passant_round_trip);
 
   return UNITY_END();
 }
