@@ -219,7 +219,6 @@ bool is_player_in_check(Board board)
 MoveList generate_legal_moves(Board board)
 {
 
-    // TODO: Take into account whose turn it is... reduce search
     MoveList move_list;
     int count = 0;
 
@@ -241,24 +240,50 @@ MoveList generate_legal_moves(Board board)
 
             switch (piece_abs) {
             // Deal with pawn case
-            case (1):
-                // TODO: Deal with taking pieces
-                // TODO: Deal with taking piece en passant
-                // TODO: Deal with pieces only moving 2 on first go
-                {
-                    rank_idx = rank + (int)piece;
-                    if (rank_idx >= 0 && rank_idx < 8 && board.grid[rank_idx][file] == EMPTY) {
-                        temp_move = (Move) { rank, file, rank_idx, file };
-                        move_list.moves[count++] = temp_move;
+            case (1): {
+                // TODO: Deal with promotion
+                rank_idx = rank + (int)piece;
+                if (rank_idx < 0 || rank_idx >= 8)
+                    break;
 
+                // Take with pawns
+                if (((board.grid[rank_idx][file - 1] * piece) < 0) && (file - 1 >= 0)) {
+                    temp_move = (Move) { rank, file, rank_idx, file - 1 };
+                    move_list.moves[count++] = temp_move;
+                }
+                if (((board.grid[rank_idx][file + 1] * piece) < 0) && (file + 1) < 8) {
+                    temp_move = (Move) { rank, file, rank_idx, file + 1 };
+                    move_list.moves[count++] = temp_move;
+                }
+
+                // Take en passant
+                if (board.ep_rank != -1) {
+                    if ((rank_idx == board.ep_rank) && ((file - 1) == board.ep_file)) {
+                        temp_move = (Move) { rank, file, board.ep_rank, board.ep_file };
+                        move_list.moves[count++] = temp_move;
+                    }
+                    if ((rank_idx == board.ep_rank) && ((file + 1) == board.ep_file)) {
+                        temp_move = (Move) { rank, file, board.ep_rank, board.ep_file };
+                        move_list.moves[count++] = temp_move;
+                    }
+                }
+
+                // Push pawns
+                if (rank_idx >= 0 && rank_idx < 8 && board.grid[rank_idx][file] == EMPTY) {
+                    temp_move = (Move) { rank, file, rank_idx, file };
+                    move_list.moves[count++] = temp_move;
+
+                    // Double push only from starting rank, and only if single push wasn't blocked
+                    if (rank == (piece > 0 ? 1 : 6)) {
                         rank_idx = rank + ((int)piece * 2);
-                        if (rank_idx >= 0 && rank_idx < 8 && board.grid[rank_idx][file] == EMPTY) {
+                        if (board.grid[rank_idx][file] == EMPTY) {
                             temp_move = (Move) { rank, file, rank_idx, file };
                             move_list.moves[count++] = temp_move;
                         }
                     }
-                    break;
                 }
+                break;
+            }
             // Deal with knight case
             case (2):
                 for (rank_idx = rank - 2; rank_idx <= rank + 2; rank_idx++) {
@@ -389,7 +414,5 @@ MoveList generate_legal_moves(Board board)
     move_list.count = count;
     return move_list;
 }
-
-// TODO: Implement separate functions for generating each piece moves so queen can be combination of bishop and rook
 
 // TODO: Implement some illegal move function with violation code that handles illegal moves properly
