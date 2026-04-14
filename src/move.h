@@ -18,5 +18,6 @@ typedef struct {
 Board apply_move(Board board, Move move);
 bool is_player_in_check(Board board);
 MoveList generate_legal_moves(Board board);
+bool is_in_check(Board board);
 
 #endif
