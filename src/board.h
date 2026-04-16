@@ -1,6 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <stdbool.h>
+
 typedef enum {
   B_KING = -6, B_QUEEN = -5, B_ROOK = -4, 
   B_BISHOP = -3, B_KNIGHT = -2, B_PAWN = -1, 
@@ -23,5 +25,6 @@ typedef struct {
 } Board;
 
 Board get_start_pos(void);
+bool is_in_check(Board board);
 
 #endif

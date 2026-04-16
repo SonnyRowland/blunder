@@ -1,6 +1,6 @@
 TARGET = blunder
 
-SRCS = src/main.c src/fen.c src/display.c src/move.c src/board.c
+SRCS = src/main.c src/fen.c src/display.c src/move.c src/board.c src/movegen.c
 
 all: $(TARGET)
 
@@ -8,7 +8,7 @@ $(TARGET): $(SRCS)
 	cc -o $(TARGET) $(SRCS)
 
 UNITY = unity/unity.c
-TEST_SRCS = src/fen.c src/display.c src/move.c src/board.c
+TEST_SRCS = src/fen.c src/display.c src/move.c src/board.c src/movegen.c
 
 .PHONY: test
 test:
