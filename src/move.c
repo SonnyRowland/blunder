@@ -57,7 +57,7 @@ static Board move_piece(Board board, Move move)
 {
     Piece moving_piece = board.grid[move.from_rank][move.from_file];
 
-    bool is_capture = board.grid[move.to_rank][move.from_rank] != EMPTY;
+    bool is_capture = board.grid[move.to_rank][move.to_file] != EMPTY;
     bool is_pawn_move = moving_piece == W_PAWN || moving_piece == B_PAWN;
 
     board.grid[move.to_rank][move.to_file] = board.grid[move.from_rank][move.from_file];
