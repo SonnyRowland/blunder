@@ -10,47 +10,11 @@ bool is_piece_move_valid(Piece piece, Move move);
 bool is_square_on_board(Move move);
 bool is_player_in_check(Board board);
 
-Board apply_move(Board board, Move move)
+void apply_move(Board* board, Move move)
 {
-
-    // Check piece exists
-    if (board.grid[move.from_rank][move.from_file] == EMPTY) {
-        printf("No piece here...\n");
-        return board;
-    }
-
-    // Check move is actually a move (and not just staying still)
-    if (move.from_rank == move.to_rank && move.from_file == move.to_file) {
-        printf("Move must be a move...\n");
-        return board;
-    }
-
-    if (!is_square_on_board(move)) {
-        printf("Move is out of board bounds...\n");
-        return board;
-    }
-
-    if (!is_piece_move_valid(board.grid[move.from_rank][move.from_file], move)) {
-        printf("Move is illegal...\n");
-        return board;
-    }
-
-    // Prevent player taking their own piece
-    if (board.grid[move.to_rank][move.to_file] * board.turn > 0) {
-        printf("Cannot take your own piece...\n");
-        return board;
-    }
-
-    // Ensure player is not in check
-    Board temp_board = move_piece(board, move);
-    temp_board.turn *= -1;
-    if (is_player_in_check(temp_board)) {
-        printf("Move would leave king in check...\n");
-        return board;
-    }
-
-    printf("Move is legal...\n");
-    return move_piece(board, move);
+    Piece piece = board->grid[move.from_rank][move.from_file];
+    board->grid[move.to_rank][move.to_file] = piece;
+    board->grid[move.from_rank][move.from_file] = EMPTY;
 }
 
 static Board move_piece(Board board, Move move)

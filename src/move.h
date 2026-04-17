@@ -15,8 +15,7 @@ typedef struct {
   int count;
 } MoveList;
 
-Board apply_move(Board board, Move move);
+void apply_move(Board* board, Move move);
 bool is_player_in_check(Board board);
-bool is_in_check(Board board);
 
 #endif
