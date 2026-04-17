@@ -137,6 +137,22 @@ void test_move_gen_pawn_edge_case_black(void) {
   TEST_ASSERT_EQUAL_INT(0, moves.count);
 }
 
+void test_move_gen_pawn_pinned_white(void){
+  const char* fen = "8/8/8/q3P1K1/8/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
+}
+
+void test_move_gen_pawn_pinned_black(void){
+  const char* fen = "7B/8/5p2/8/3k4/8/8/8 b - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
+}
+
 void test_move_gen_knight_centre(void) {
   const char* fen = "8/8/8/4N3/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
@@ -197,6 +213,22 @@ void test_move_gen_knight_blocked_black(void) {
   TEST_ASSERT_EQUAL_INT(0, moves.count);
 }
 
+void test_move_gen_knight_pinned_white(void){
+  const char* fen = "3r4/8/8/3N4/8/3K4/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
+}
+
+void test_move_gen_knight_pinned_black(void) {
+  const char* fen = "8/8/8/8/3Rn1k1/8/8/8 b - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
+}
+
 void test_move_gen_bishop_centre(void) {
   const char* fen = "8/8/8/4B3/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
@@ -219,6 +251,22 @@ void test_move_gen_bishop_corner(void) {
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
 }
 
+void test_move_gen_bishop_pinned_white(void) {
+  const char* fen = "3r4/8/8/8/3B4/8/8/3K4 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(5, moves.count);
+}
+
+void test_move_gen_bishop_pinned_black(void) {
+  const char* fen = "8/8/8/1k1b2R1/8/8/8/8 b - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
+}
+
 void test_move_gen_rook_centre(void) {
   const char* fen = "8/8/8/4R3/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
@@ -239,6 +287,22 @@ void test_move_gen_rook_corner(void) {
 
   TEST_ASSERT_EQUAL_INT(14, moves.count);
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+}
+
+void test_move_gen_rook_pinned_white(void) {
+  const char* fen = "8/6b1/8/8/8/2R5/1K6/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(7, moves.count);
+}
+
+void test_move_gen_rook_pinned_black(void) {
+  const char* fen = "8/6k1/8/4r3/3Q4/8/8/8 b - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
 }
 
 void test_move_gen_queen_centre(void) {
@@ -265,6 +329,22 @@ void test_move_gen_queen_corner(void) {
   TEST_ASSERT_EQUAL_INT(21, moves.count);
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move_diag));
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move_horiz));
+}
+
+void test_move_gen_queen_pinned_white(void) {
+  const char* fen = "8/8/8/8/1KQr4/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
+}
+
+void test_move_gen_queen_pinned_black(void) {
+  const char* fen = "8/8/8/8/1R2q1k1/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(11, moves.count);
 }
 
 void test_move_gen_king_centre(void) {
@@ -294,24 +374,24 @@ void test_move_gen_king_corner(void) {
 }
 
 void test_move_gen_king_takes_white(void) {
-  const char* fen = "8/8/2nnn3/2nKn3/2nnn3/8/8/8 w - - 0 1";
+  const char* fen = "8/8/2n1n3/3K4/2n1n3/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
   MoveList moves = generate_legal_moves(board);
 
   Move test_move = (Move){4,3,5,4};
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(4, moves.count);
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
 }
 
 void test_move_gen_king_takes_black(void) {
-  const char* fen = "8/8/2NNN3/2NkN3/2NNN3/8/8/8 b - - 0 1";
+  const char* fen = "8/8/2N1N3/3k4/2N1N3/8/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
   MoveList moves = generate_legal_moves(board);
 
-  Move test_move = (Move){4,3,3,3};
+  Move test_move = (Move){4,3,3,2};
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(4, moves.count);
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
 }
 
@@ -353,18 +433,28 @@ int main(void) {
   RUN_TEST(test_move_gen_pawn_takes_en_passant_black);
   RUN_TEST(test_move_gen_pawn_edge_case_white);
   RUN_TEST(test_move_gen_pawn_edge_case_black);
+  RUN_TEST(test_move_gen_pawn_pinned_white);
+  RUN_TEST(test_move_gen_pawn_pinned_black);
   RUN_TEST(test_move_gen_knight_centre);
   RUN_TEST(test_move_gen_knight_corner);
   RUN_TEST(test_move_gen_knight_takes_white);
   RUN_TEST(test_move_gen_knight_takes_black);
   RUN_TEST(test_move_gen_knight_blocked_white);
   RUN_TEST(test_move_gen_knight_blocked_black);
+  RUN_TEST(test_move_gen_knight_pinned_white);
+  RUN_TEST(test_move_gen_knight_pinned_black);
   RUN_TEST(test_move_gen_bishop_centre);
   RUN_TEST(test_move_gen_bishop_corner);
+  RUN_TEST(test_move_gen_bishop_pinned_white);
+  RUN_TEST(test_move_gen_bishop_pinned_black);
   RUN_TEST(test_move_gen_rook_centre);
   RUN_TEST(test_move_gen_rook_corner);
+  RUN_TEST(test_move_gen_rook_pinned_white);
+  RUN_TEST(test_move_gen_rook_pinned_black);
   RUN_TEST(test_move_gen_queen_centre);
   RUN_TEST(test_move_gen_queen_corner);
+  RUN_TEST(test_move_gen_queen_pinned_white);
+  RUN_TEST(test_move_gen_queen_pinned_black);
   RUN_TEST(test_move_gen_king_centre);
   RUN_TEST(test_move_gen_king_corner);
   RUN_TEST(test_move_gen_king_takes_white);

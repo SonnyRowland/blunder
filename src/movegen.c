@@ -2,6 +2,7 @@
 #include "board.h"
 #include "move.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 static void generate_pawn_moves(int rank, int file, Board board, MoveList* move_list);
@@ -10,9 +11,10 @@ static void generate_bishop_moves(int rank, int file, Board board, MoveList* mov
 static void generate_rook_moves(int rank, int file, Board board, MoveList* move_list);
 static void generate_king_moves(int rank, int file, Board board, MoveList* move_list);
 
+static void add_move_if_legal(MoveList* move_list, Board* board, Move move);
+
 MoveList generate_legal_moves(Board board)
 {
-
     MoveList move_list = { .count = 0 };
 
     for (int rank = 0; rank < 8; rank++) {
@@ -74,36 +76,36 @@ static void generate_pawn_moves(int rank, int file, Board board, MoveList* move_
     // Take with pawns
     if ((file - 1 >= 0) && ((board.grid[rank_idx][file - 1] * piece) < 0)) {
         temp_move = (Move) { rank, file, rank_idx, file - 1 };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
     }
     if (((file + 1) < 8) && ((board.grid[rank_idx][file + 1] * piece) < 0)) {
         temp_move = (Move) { rank, file, rank_idx, file + 1 };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
     }
 
     // Take en passant
     if (board.ep_rank != -1) {
         if ((rank_idx == board.ep_rank) && ((file - 1) == board.ep_file)) {
             temp_move = (Move) { rank, file, board.ep_rank, board.ep_file };
-            move_list->moves[move_list->count++] = temp_move;
+            add_move_if_legal(move_list, &board, temp_move);
         }
         if ((rank_idx == board.ep_rank) && ((file + 1) == board.ep_file)) {
             temp_move = (Move) { rank, file, board.ep_rank, board.ep_file };
-            move_list->moves[move_list->count++] = temp_move;
+            add_move_if_legal(move_list, &board, temp_move);
         }
     }
 
     // Push pawns
     if (board.grid[rank_idx][file] == EMPTY) {
         temp_move = (Move) { rank, file, rank_idx, file };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
 
         // Double push only from starting rank, and only if single push wasn't blocked
         if (rank == (piece > 0 ? 1 : 6)) {
             rank_idx = rank + ((int)piece * 2);
             if (board.grid[rank_idx][file] == EMPTY) {
                 temp_move = (Move) { rank, file, rank_idx, file };
-                move_list->moves[move_list->count++] = temp_move;
+                add_move_if_legal(move_list, &board, temp_move);
             }
         }
     }
@@ -128,7 +130,7 @@ static void generate_knight_moves(int rank, int file, Board board, MoveList* mov
                 continue;
             if ((board.grid[rank_idx][file_idx] * board.grid[rank][file]) <= 0) {
                 temp_move = (Move) { rank, file, rank_idx, file_idx };
-                move_list->moves[move_list->count++] = temp_move;
+                add_move_if_legal(move_list, &board, temp_move);
             }
         }
     }
@@ -142,7 +144,7 @@ static void generate_bishop_moves(int rank, int file, Board board, MoveList* mov
 
     while (rank_idx < 8 && file_idx < 8 && (board.grid[rank_idx][file_idx] * board.turn) <= 0) {
         temp_move = (Move) { rank, file, rank_idx, file_idx };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
         if (board.grid[rank_idx][file_idx] != EMPTY)
             break;
         rank_idx++;
@@ -153,7 +155,7 @@ static void generate_bishop_moves(int rank, int file, Board board, MoveList* mov
     file_idx = file - 1;
     while (rank_idx < 8 && file_idx >= 0 && (board.grid[rank_idx][file_idx] * board.turn) <= 0) {
         temp_move = (Move) { rank, file, rank_idx, file_idx };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
         if (board.grid[rank_idx][file_idx] != EMPTY)
             break;
         rank_idx++;
@@ -164,7 +166,7 @@ static void generate_bishop_moves(int rank, int file, Board board, MoveList* mov
     file_idx = file + 1;
     while (rank_idx >= 0 && file_idx < 8 && (board.grid[rank_idx][file_idx] * board.turn) <= 0) {
         temp_move = (Move) { rank, file, rank_idx, file_idx };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
         if (board.grid[rank_idx][file_idx] != EMPTY)
             break;
         rank_idx--;
@@ -175,7 +177,7 @@ static void generate_bishop_moves(int rank, int file, Board board, MoveList* mov
     file_idx = file - 1;
     while (rank_idx >= 0 && file_idx >= 0 && (board.grid[rank_idx][file_idx] * board.turn) <= 0) {
         temp_move = (Move) { rank, file, rank_idx, file_idx };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
         if (board.grid[rank_idx][file_idx] != EMPTY)
             break;
         rank_idx--;
@@ -190,7 +192,7 @@ static void generate_rook_moves(int rank, int file, Board board, MoveList* move_
 
     while (file_idx < 8 && (board.grid[rank][file_idx] * board.turn) <= 0) {
         temp_move = (Move) { rank, file, rank, file_idx };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
         if (board.grid[rank][file_idx] != EMPTY)
             break;
         file_idx++;
@@ -199,7 +201,7 @@ static void generate_rook_moves(int rank, int file, Board board, MoveList* move_
     file_idx = file - 1;
     while (file_idx >= 0 && (board.grid[rank][file_idx] * board.turn) <= 0) {
         temp_move = (Move) { rank, file, rank, file_idx };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
         if (board.grid[rank][file_idx] != EMPTY)
             break;
         file_idx--;
@@ -208,7 +210,7 @@ static void generate_rook_moves(int rank, int file, Board board, MoveList* move_
     int rank_idx = rank + 1;
     while (rank_idx < 8 && (board.grid[rank_idx][file] * board.turn) <= 0) {
         temp_move = (Move) { rank, file, rank_idx, file };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
         if (board.grid[rank_idx][file] != EMPTY)
             break;
         rank_idx++;
@@ -217,7 +219,7 @@ static void generate_rook_moves(int rank, int file, Board board, MoveList* move_
     rank_idx = rank - 1;
     while (rank_idx >= 0 && (board.grid[rank_idx][file] * board.turn) <= 0) {
         temp_move = (Move) { rank, file, rank_idx, file };
-        move_list->moves[move_list->count++] = temp_move;
+        add_move_if_legal(move_list, &board, temp_move);
         if (board.grid[rank_idx][file] != EMPTY)
             break;
         rank_idx--;
@@ -238,8 +240,21 @@ static void generate_king_moves(int rank, int file, Board board, MoveList* move_
                 continue;
             if ((board.grid[rank_idx][file_idx] * board.grid[rank][file]) <= 0) {
                 temp_move = (Move) { rank, file, rank_idx, file_idx };
-                move_list->moves[move_list->count++] = temp_move;
+                add_move_if_legal(move_list, &board, temp_move);
             }
         }
     }
+}
+
+static void add_move_if_legal(MoveList* move_list, Board* board, Move move)
+{
+    Piece temp_piece = board->grid[move.to_rank][move.to_file];
+    apply_move(board, move);
+    if (!is_in_check(*board)) {
+        move_list->moves[move_list->count++] = move;
+    }
+
+    Move reverse_move = (Move) { move.to_rank, move.to_file, move.from_rank, move.from_file };
+    apply_move(board, reverse_move);
+    board->grid[move.to_rank][move.to_file] = temp_piece;
 }
