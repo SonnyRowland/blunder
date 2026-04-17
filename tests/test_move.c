@@ -6,6 +6,26 @@
 void setUp(void) {}
 void tearDown(void) {}
 
+void test_apply_move_en_passant_white(void) {
+  const char* fen = "rnbqkbnr/1pp1pppp/p7/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {4, 4, 5, 3};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[4][3] == EMPTY);
+}
+
+void test_apply_move_en_passant_black(void) {
+  const char* fen = "rnbqkbnr/pppp1ppp/8/8/3Pp3/P6P/1PP1PPP1/RNBQKBNR b KQkq d3 0 3";
+  Board board = fen_to_board(fen);
+  Move move = (Move){3, 4, 2, 3};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[3][3] == EMPTY);
+}
+
 void test_check_start_pos(void) {
   Board board = get_start_pos();
 
@@ -449,6 +469,9 @@ void test_check_queen_rank_increase_file_increase_black(void) {
 
 int main(void) {
   UNITY_BEGIN();
+
+  RUN_TEST(test_apply_move_en_passant_white);
+  RUN_TEST(test_apply_move_en_passant_black);
 
   RUN_TEST(test_check_start_pos);
   RUN_TEST(test_check_pawn_1_white);

@@ -15,6 +15,11 @@ void apply_move(Board* board, Move move) {
   Piece piece = board->grid[move.from_rank][move.from_file];
   board->grid[move.to_rank][move.to_file] = piece;
   board->grid[move.from_rank][move.from_file] = EMPTY;
+  bool is_ep = ((board->ep_rank == move.to_rank) &&
+                (board->ep_file == move.to_file) && (piece == board->turn));
+  if (is_ep) {
+    board->grid[move.to_rank + (-1 * board->turn)][move.to_file] = EMPTY;
+  }
 }
 
 static Board move_piece(Board board, Move move) {
