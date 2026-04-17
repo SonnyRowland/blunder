@@ -20,4 +20,4 @@ test:
 
 .PHONY: format
 format:
-	clang-format --style=WebKit -i $(SRCS)
+	clang-format --style=Google -i $(SRCS)
