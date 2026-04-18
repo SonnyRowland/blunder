@@ -34,6 +34,8 @@ void apply_move(Board* board, Move move) {
       board->grid[move.to_rank][0] = EMPTY;
     }
   }
+
+  if (move.promotion) board->grid[move.to_rank][move.to_file] = move.promotion;
 }
 
 static Board move_piece(Board board, Move move) {

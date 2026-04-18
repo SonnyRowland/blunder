@@ -53,14 +53,6 @@ void test_move_gen_pawn_moves(void) {
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
 }
 
-void test_move_gen_pawn_at_end(void) {
-  const char* fen = "P7/8/8/8/8/8/8/8 w - - 0 1";
-  Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(board);
-
-  TEST_ASSERT_EQUAL_INT(0, moves.count);
-}
-
 void test_move_gen_pawn_double_push_white(void) {
   const char* fen = "8/8/8/8/8/1P6/P1PPPPPP/8 w - - 0 1";
   Board board = fen_to_board(fen);
@@ -119,22 +111,6 @@ void test_move_gen_pawn_takes_en_passant_black(void) {
 
   TEST_ASSERT_EQUAL_INT(2, moves.count);
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
-}
-
-void test_move_gen_pawn_edge_case_white(void) {
-  const char* fen = "PPPPPPPP/8/8/8/8/8/8/8 w - - 0 1";
-  Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(board);
-
-  TEST_ASSERT_EQUAL_INT(0, moves.count);
-}
-
-void test_move_gen_pawn_edge_case_black(void) {
-  const char* fen = "8/8/8/8/8/8/8/pppppppp b - - 0 1";
-  Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(board);
-
-  TEST_ASSERT_EQUAL_INT(0, moves.count);
 }
 
 void test_move_gen_pawn_pinned_white(void){
@@ -597,13 +573,28 @@ void test_move_gen_castle_k_blocked_q_black(void) {
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move2));
 }
 
+void test_move_gen_promotion_white(void) {
+  const char* fen = "4P3/8/8/8/8/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(4, moves.count);
+}
+
+void test_move_gen_promotion_black(void){
+  const char* fen = "8/8/8/8/8/8/8/1p6 b - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  TEST_ASSERT_EQUAL_INT(4, moves.count);
+}
+
 int main(void) {
   UNITY_BEGIN();
 
   RUN_TEST(test_move_gen_empty_board);
   RUN_TEST(test_move_gen_start_pos);
   RUN_TEST(test_move_gen_e4);
-  RUN_TEST(test_move_gen_pawn_at_end);
   RUN_TEST(test_move_gen_pawn_moves);
   RUN_TEST(test_move_gen_pawn_double_push_white);
   RUN_TEST(test_move_gen_pawn_double_push_black);
@@ -611,8 +602,6 @@ int main(void) {
   RUN_TEST(test_move_gen_pawn_takes_black);
   RUN_TEST(test_move_gen_pawn_takes_en_passant_white);
   RUN_TEST(test_move_gen_pawn_takes_en_passant_black);
-  RUN_TEST(test_move_gen_pawn_edge_case_white);
-  RUN_TEST(test_move_gen_pawn_edge_case_black);
   RUN_TEST(test_move_gen_pawn_pinned_white);
   RUN_TEST(test_move_gen_pawn_pinned_black);
   RUN_TEST(test_move_gen_knight_centre);
@@ -660,6 +649,8 @@ int main(void) {
   RUN_TEST(test_move_gen_castle_k_q_white);
   RUN_TEST(test_move_gen_castle_k_blocked_q_white);
   RUN_TEST(test_move_gen_castle_k_blocked_q_black);
+  RUN_TEST(test_move_gen_promotion_white);
+  RUN_TEST(test_move_gen_promotion_black);
 
   return UNITY_END();
 } 

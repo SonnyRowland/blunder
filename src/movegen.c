@@ -19,6 +19,9 @@ static void generate_king_moves(int rank, int file, Board board,
 static void generate_castling_moves(int rank, int file, Board board,
                                     MoveList* move_list);
 
+static void generate_promotion_moves(int rank, int file, Board board,
+                                     MoveList* move_list);
+
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move);
 
 MoveList generate_legal_moves(Board board) {
@@ -36,7 +39,10 @@ MoveList generate_legal_moves(Board board) {
       switch (piece_abs) {
         // Deal with pawn case
         case (1): {
-          generate_pawn_moves(rank, file, board, &move_list);
+          if (rank > 0 && rank < 7)
+            generate_pawn_moves(rank, file, board, &move_list);
+          if (rank == 0 || rank == 7)
+            generate_promotion_moves(rank, file, board, &move_list);
           break;
         }
         // Deal with knight case
@@ -307,6 +313,16 @@ static void generate_castling_moves(int rank, int file, Board board,
       temp_move = (Move){rank, file, rank, file - 2};
       add_move_if_legal(move_list, &board, temp_move);
     }
+  }
+}
+
+static void generate_promotion_moves(int rank, int file, Board board,
+                                     MoveList* move_list) {
+  Move temp_move;
+
+  for (int i = 2; i < 6; i++) {
+    temp_move = (Move){rank, file, rank, file, i * board.turn};
+    add_move_if_legal(move_list, &board, temp_move);
   }
 }
 
