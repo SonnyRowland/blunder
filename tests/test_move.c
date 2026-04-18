@@ -26,6 +26,50 @@ void test_apply_move_en_passant_black(void) {
   TEST_ASSERT_TRUE(board.grid[3][3] == EMPTY);
 }
 
+void test_apply_move_castle_k_white(void) {
+  const char* fen = "8/8/8/8/8/8/8/4K2R w K - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {0, 4, 0, 6};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[0][5] == W_ROOK);
+  TEST_ASSERT_TRUE(board.grid[0][6] == W_KING);
+}
+
+void test_apply_move_castle_k_black(void) {
+  const char* fen = "4k2r/8/8/8/8/8/8/8 b k - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {7, 4, 7, 6};
+
+  apply_move(&board, move);
+  
+  TEST_ASSERT_TRUE(board.grid[7][5] == B_ROOK);
+  TEST_ASSERT_TRUE(board.grid[7][6] == B_KING);
+}
+
+void test_apply_move_castle_q_white(void){
+  const char* fen = "8/8/8/8/8/8/8/R3K3 w Q - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {0, 4, 0, 2};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[0][2] == W_KING);
+  TEST_ASSERT_TRUE(board.grid[0][3] == W_ROOK);
+}
+
+void test_apply_move_castle_q_black(void){
+  const char* fen = "r3k3/8/8/8/8/8/8/8 b q - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {7, 4, 7, 2};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[7][2] == B_KING);
+  TEST_ASSERT_TRUE(board.grid[7][3] == B_ROOK);
+}
+
 void test_check_start_pos(void) {
   Board board = get_start_pos();
 
@@ -472,6 +516,10 @@ int main(void) {
 
   RUN_TEST(test_apply_move_en_passant_white);
   RUN_TEST(test_apply_move_en_passant_black);
+  RUN_TEST(test_apply_move_castle_k_white);
+  RUN_TEST(test_apply_move_castle_k_black);
+  RUN_TEST(test_apply_move_castle_q_white);
+  RUN_TEST(test_apply_move_castle_q_black);
 
   RUN_TEST(test_check_start_pos);
   RUN_TEST(test_check_pawn_1_white);

@@ -15,10 +15,24 @@ void apply_move(Board* board, Move move) {
   Piece piece = board->grid[move.from_rank][move.from_file];
   board->grid[move.to_rank][move.to_file] = piece;
   board->grid[move.from_rank][move.from_file] = EMPTY;
+
+  bool is_castle =
+      (abs(piece) == W_KING) && (abs(move.from_file - move.to_file) == 2);
   bool is_ep = ((board->ep_rank == move.to_rank) &&
                 (board->ep_file == move.to_file) && (piece == board->turn));
+
   if (is_ep) {
     board->grid[move.to_rank + (-1 * board->turn)][move.to_file] = EMPTY;
+  }
+
+  if (is_castle) {
+    if (move.to_file - move.from_file > 0) {
+      board->grid[move.to_rank][move.to_file - 1] = W_ROOK * board->turn;
+      board->grid[move.to_rank][7] = EMPTY;
+    } else {
+      board->grid[move.to_rank][move.to_file + 1] = W_ROOK * board->turn;
+      board->grid[move.to_rank][0] = EMPTY;
+    }
   }
 }
 

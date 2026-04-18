@@ -16,6 +16,8 @@ static void generate_rook_moves(int rank, int file, Board board,
                                 MoveList* move_list);
 static void generate_king_moves(int rank, int file, Board board,
                                 MoveList* move_list);
+static void generate_castling_moves(int rank, int file, Board board,
+                                    MoveList* move_list);
 
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move);
 
@@ -57,6 +59,7 @@ MoveList generate_legal_moves(Board board) {
         // Deal with king case
         case (6):
           generate_king_moves(rank, file, board, &move_list);
+          generate_castling_moves(rank, file, board, &move_list);
           break;
         default:
           break; /* Intentionally unhandled */
@@ -238,7 +241,77 @@ static void generate_king_moves(int rank, int file, Board board,
   }
 }
 
+static void generate_castling_moves(int rank, int file, Board board,
+                                    MoveList* move_list) {
+  Move temp_move;
+
+  // Prevent castle out of check
+  if (is_in_check(board)) return;
+
+  bool can_castle_k = board.turn ? board.castle_wk : board.castle_bk;
+  bool can_castle_q = board.turn ? board.castle_wq : board.castle_bq;
+
+  bool move_through_check = false;
+  // Ensure clear path between king and rook
+  if (can_castle_k && board.grid[rank][file + 1] == EMPTY &&
+      board.grid[rank][file + 2] == EMPTY) {
+    // Prevent castle through check
+    temp_move = (Move){rank, file, rank, file + 1};
+    apply_move(&board, temp_move);
+    if (is_in_check(board)) {
+      temp_move = (Move){rank, file + 1, rank, file};
+      apply_move(&board, temp_move);
+      move_through_check = true;
+    }
+
+    temp_move = (Move){rank, file + 1, rank, file + 2};
+    apply_move(&board, temp_move);
+    if (is_in_check(board)) {
+      temp_move = (Move){rank, file + 2, rank, file};
+      apply_move(&board, temp_move);
+      move_through_check = true;
+    }
+
+    temp_move = (Move){rank, file + 2, rank, file};
+    apply_move(&board, temp_move);
+
+    if (!move_through_check) {
+      temp_move = (Move){rank, file, rank, file + 2};
+      add_move_if_legal(move_list, &board, temp_move);
+    }
+  }
+
+  move_through_check = false;
+  if (can_castle_q && board.grid[rank][file - 1] == EMPTY &&
+      board.grid[rank][file - 2] == EMPTY) {
+    Move temp_move = (Move){rank, file, rank, file - 1};
+    apply_move(&board, temp_move);
+    if (is_in_check(board)) {
+      temp_move = (Move){rank, file - 1, rank, file};
+      apply_move(&board, temp_move);
+      move_through_check = true;
+    }
+
+    temp_move = (Move){rank, file - 1, rank, file - 2};
+    apply_move(&board, temp_move);
+    if (is_in_check(board)) {
+      temp_move = (Move){rank, file - 2, rank, file};
+      apply_move(&board, temp_move);
+      move_through_check = true;
+    }
+
+    temp_move = (Move){rank, file - 2, rank, file};
+    apply_move(&board, temp_move);
+
+    if (!move_through_check) {
+      temp_move = (Move){rank, file, rank, file - 2};
+      add_move_if_legal(move_list, &board, temp_move);
+    }
+  }
+}
+
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move) {
+  // Check whether it leaves king in check
   Piece temp_piece = board->grid[move.to_rank][move.to_file];
   apply_move(board, move);
   if (!is_in_check(*board)) {
@@ -249,4 +322,24 @@ static void add_move_if_legal(MoveList* move_list, Board* board, Move move) {
       (Move){move.to_rank, move.to_file, move.from_rank, move.from_file};
   apply_move(board, reverse_move);
   board->grid[move.to_rank][move.to_file] = temp_piece;
+
+  // Reverse castle move
+  bool is_castle =
+      (abs(board->grid[move.from_rank][move.from_file]) == W_KING) &&
+      (abs(move.to_file - move.from_file) == 2);
+  if (is_castle) {
+    if (board->turn == 1) {
+      if (move.to_file > move.from_file) {
+        board->grid[0][7] = W_ROOK;
+      } else {
+        board->grid[0][0] = W_ROOK;
+      }
+    } else {
+      if (move.to_file > move.from_file) {
+        board->grid[7][7] = B_ROOK;
+      } else {
+        board->grid[7][0] = B_ROOK;
+      }
+    }
+  }
 }
