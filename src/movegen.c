@@ -248,8 +248,8 @@ static void generate_castling_moves(int rank, int file, Board board,
   // Prevent castle out of check
   if (is_in_check(board)) return;
 
-  bool can_castle_k = board.turn ? board.castle_wk : board.castle_bk;
-  bool can_castle_q = board.turn ? board.castle_wq : board.castle_bq;
+  bool can_castle_k = (board.turn == 1) ? board.castle_wk : board.castle_bk;
+  bool can_castle_q = (board.turn == 1) ? board.castle_wq : board.castle_bq;
 
   bool move_through_check = false;
   // Ensure clear path between king and rook

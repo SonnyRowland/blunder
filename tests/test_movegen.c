@@ -659,7 +659,7 @@ int main(void) {
   RUN_TEST(test_move_gen_castle_blocked_q_black);
   RUN_TEST(test_move_gen_castle_k_q_white);
   RUN_TEST(test_move_gen_castle_k_blocked_q_white);
-  RUN_TEST(test_move_gen_castle_k_blocked_q_white);
+  RUN_TEST(test_move_gen_castle_k_blocked_q_black);
 
   return UNITY_END();
 } 
