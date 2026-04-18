@@ -70,6 +70,86 @@ void test_apply_move_castle_q_black(void){
   TEST_ASSERT_TRUE(board.grid[7][3] == B_ROOK);
 }
 
+void test_apply_move_promotion_knight_white(void) {
+  const char* fen = "4P3/8/8/8/8/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {7, 4, 7, 4, 2};
+  
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[7][4] == W_KNIGHT);
+}
+
+void test_apply_move_promotion_knight_black(void){
+  const char* fen = "8/8/8/8/8/8/8/1p6 b - - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {0, 1, 0, 1, -2};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[0][1] == B_KNIGHT);
+}
+
+void test_apply_move_promotion_bishop_white(void){
+  const char* fen = "3P4/8/8/8/8/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {7, 3, 7, 3, 3};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[7][3] == W_BISHOP);
+}
+
+void test_apply_move_promotion_bishop_black(void){
+  const char* fen = "8/8/8/8/8/8/8/7p b - - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {0, 7, 0, 7, -3};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[0][7] == B_BISHOP);
+}
+
+void test_apply_move_promotion_rook_white(void){
+  const char* fen = "5P2/8/8/8/8/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {7, 5, 7, 5, 4};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[7][5] == W_ROOK);
+}
+
+void test_apply_move_promotion_rook_black(void){
+  const char* fen = "8/8/8/8/8/8/8/4p3 b - - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move){0, 4, 0, 4, -4};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[0][4] == B_ROOK);
+}
+
+void test_apply_move_promotion_queen_white(void){
+  const char* fen = "7P/8/8/8/8/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move) {7, 7, 7, 7, 5};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[7][7] == W_QUEEN);
+}
+
+void test_apply_move_promotion_queen_black(void){
+  const char* fen = "8/8/8/8/8/8/8/p7 b - - 0 1";
+  Board board = fen_to_board(fen);
+  Move move = (Move){0, 0, 0, 0, -5};
+
+  apply_move(&board, move);
+
+  TEST_ASSERT_TRUE(board.grid[0][0] == B_QUEEN);
+}
+
 void test_check_start_pos(void) {
   Board board = get_start_pos();
 
@@ -520,6 +600,14 @@ int main(void) {
   RUN_TEST(test_apply_move_castle_k_black);
   RUN_TEST(test_apply_move_castle_q_white);
   RUN_TEST(test_apply_move_castle_q_black);
+  RUN_TEST(test_apply_move_promotion_knight_white);
+  RUN_TEST(test_apply_move_promotion_knight_black);
+  RUN_TEST(test_apply_move_promotion_bishop_white);
+  RUN_TEST(test_apply_move_promotion_bishop_black);
+  RUN_TEST(test_apply_move_promotion_rook_white);
+  RUN_TEST(test_apply_move_promotion_rook_black);
+  RUN_TEST(test_apply_move_promotion_queen_white);
+  RUN_TEST(test_apply_move_promotion_queen_black);
 
   RUN_TEST(test_check_start_pos);
   RUN_TEST(test_check_pawn_1_white);

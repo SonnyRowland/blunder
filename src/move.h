@@ -8,6 +8,7 @@
 typedef struct {
   int from_rank, from_file;
   int to_rank, to_file;
+  int promotion;
 } Move;
 
 typedef struct {
