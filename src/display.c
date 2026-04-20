@@ -66,8 +66,14 @@ void print_grid(Board board) {
 
 void print_movelist(MoveList moveList) {
   for (int i = 0; i < moveList.count; i++) {
-    printf("{%i, %i, %i, %i}\n", moveList.moves[i].from_rank,
+    printf("{%i, %i, %i, %i", moveList.moves[i].from_rank,
            moveList.moves[i].from_file, moveList.moves[i].to_rank,
            moveList.moves[i].to_file);
+
+    if (moveList.moves[i].promotion) {
+      printf(", %i", moveList.moves[i].promotion);
+    }
+
+    printf("}\n");
   }
 }
