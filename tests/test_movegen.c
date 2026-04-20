@@ -574,7 +574,7 @@ void test_move_gen_castle_k_blocked_q_black(void) {
 }
 
 void test_move_gen_promotion_white(void) {
-  const char* fen = "4P3/8/8/8/8/8/8/8 w - - 0 1";
+  const char* fen = "8/4P3/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
   MoveList moves = generate_legal_moves(board);
 
@@ -582,11 +582,33 @@ void test_move_gen_promotion_white(void) {
 }
 
 void test_move_gen_promotion_black(void){
-  const char* fen = "8/8/8/8/8/8/8/1p6 b - - 0 1";
+  const char* fen = "8/8/8/8/8/8/1p6/8 b - - 0 1";
   Board board = fen_to_board(fen);
   MoveList moves = generate_legal_moves(board);
 
   TEST_ASSERT_EQUAL_INT(4, moves.count);
+}
+
+void test_move_gen_promotion_on_capture_white(void){
+  const char* fen = "5n2/4P3/8/8/8/8/8/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  Move test_move = (Move) {6, 4, 7, 5, 5};
+
+  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
+}
+
+void test_move_gen_promotion_on_capture_black(void){
+  const char* fen = "8/8/8/8/8/8/3p4/2Q5 b - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  Move test_move = (Move) {1, 3, 0, 2, -4};
+
+  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(8, moves.count);
 }
 
 int main(void) {
@@ -651,6 +673,8 @@ int main(void) {
   RUN_TEST(test_move_gen_castle_k_blocked_q_black);
   RUN_TEST(test_move_gen_promotion_white);
   RUN_TEST(test_move_gen_promotion_black);
+  RUN_TEST(test_move_gen_promotion_on_capture_white);
+  RUN_TEST(test_move_gen_promotion_on_capture_black);
 
   return UNITY_END();
 } 

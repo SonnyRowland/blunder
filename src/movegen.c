@@ -39,10 +39,12 @@ MoveList generate_legal_moves(Board board) {
       switch (piece_abs) {
         // Deal with pawn case
         case (1): {
-          if (rank > 0 && rank < 7)
-            generate_pawn_moves(rank, file, board, &move_list);
-          if (rank == 0 || rank == 7)
+          if ((rank == 1 && board.turn == -1) ||
+              (rank == 6 && board.turn == 1)) {
             generate_promotion_moves(rank, file, board, &move_list);
+          } else {
+            generate_pawn_moves(rank, file, board, &move_list);
+          }
           break;
         }
         // Deal with knight case
@@ -78,12 +80,11 @@ MoveList generate_legal_moves(Board board) {
 
 static void generate_pawn_moves(int rank, int file, Board board,
                                 MoveList* move_list) {
-  // TODO: Deal with promotion
   Piece piece = board.grid[rank][file];
   int rank_idx = rank + (int)piece;
-  Move temp_move;
-
   if (rank_idx < 0 || rank_idx >= 8) return;
+
+  Move temp_move;
 
   // Take with pawns
   if ((file - 1 >= 0) && ((board.grid[rank_idx][file - 1] * piece) < 0)) {
@@ -319,10 +320,22 @@ static void generate_castling_moves(int rank, int file, Board board,
 static void generate_promotion_moves(int rank, int file, Board board,
                                      MoveList* move_list) {
   Move temp_move;
+  int rank_idx = rank + board.turn;
 
   for (int i = 2; i < 6; i++) {
-    temp_move = (Move){rank, file, rank, file, i * board.turn};
+    temp_move = (Move){rank, file, rank_idx, file, i * board.turn};
     add_move_if_legal(move_list, &board, temp_move);
+
+    if ((file - 1 >= 0) &&
+        ((board.grid[rank_idx][file - 1] * board.turn) < 0)) {
+      temp_move = (Move){rank, file, rank_idx, file - 1, i * board.turn};
+      add_move_if_legal(move_list, &board, temp_move);
+    }
+    if (((file + 1) < 8) &&
+        ((board.grid[rank_idx][file + 1] * board.turn) < 0)) {
+      temp_move = (Move){rank, file, rank_idx, file + 1, i * board.turn};
+      add_move_if_legal(move_list, &board, temp_move);
+    }
   }
 }
 
