@@ -150,6 +150,84 @@ void test_apply_move_promotion_queen_black(void){
   TEST_ASSERT_TRUE(board.grid[0][0] == B_QUEEN);
 }
 
+void test_reverse_move_en_passant_white(void) {
+  const char* fen = "rnbqkbnr/pppp1pp1/7p/3Pp3/8/8/PPP1PPPP/RNBQKBNR w KQkq e6 0 3";
+  char fen2[128];
+  Board board = fen_to_board(fen);
+  Move move = (Move) {4, 3, 5, 4};
+  
+  Piece piece_taken = apply_move(&board, move);
+  reverse_move(&board, move, piece_taken);
+  board_to_fen(board, fen2);
+
+  TEST_ASSERT_EQUAL_STRING(fen, fen2);
+}
+
+void test_reverse_move_en_passant_black(void) {
+  const char* fen = "rnbqkbnr/p1pppppp/8/8/1pP5/P6P/1P1PPPP1/RNBQKBNR b KQkq c3 0 3";
+  char fen2[128];
+  Board board = fen_to_board(fen);
+  Move move = (Move) {3, 1, 2, 2};
+
+  Piece piece_taken = apply_move(&board, move);
+  reverse_move(&board, move, piece_taken);
+  board_to_fen(board, fen2);
+
+  TEST_ASSERT_EQUAL_STRING(fen, fen2);
+}
+
+void test_reverse_move_castle_k_white(void) {
+  const char* fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQK2R w KQkq - 0 1";
+  char fen2[128];
+  Board board = fen_to_board(fen);
+  Move move = (Move) {0, 4, 0, 6};
+
+  Piece piece_taken = apply_move(&board, move);
+  reverse_move(&board, move, piece_taken);
+  board_to_fen(board, fen2);
+
+  TEST_ASSERT_EQUAL_STRING(fen, fen2);
+}
+
+void test_reverse_move_castle_k_black(void){
+  const char* fen = "rnbqk2r/pppppppp/8/8/8/8/PPPPPPPP/RNBQK2R b KQkq - 0 1";
+  char fen2[128];
+  Board board = fen_to_board(fen);
+  Move move = (Move) {7, 4, 7, 6};
+
+  Piece piece_taken = apply_move(&board, move);
+  reverse_move(&board, move, piece_taken);
+  board_to_fen(board, fen2);
+
+  TEST_ASSERT_EQUAL_STRING(fen, fen2);
+}
+
+void test_reverse_move_castle_q_white(void) {
+  const char* fen = "rnbqk2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1";
+  char fen2[128];
+  Board board = fen_to_board(fen);
+  Move move = (Move) {0, 4, 0, 2};
+
+  Piece piece_taken = apply_move(&board, move);
+  reverse_move(&board, move, piece_taken);
+  board_to_fen(board, fen2);
+
+  TEST_ASSERT_EQUAL_STRING(fen, fen2);
+}
+
+void test_reverse_move_castle_q_black(void) {
+  const char* fen = "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R b KQkq - 0 1";
+  char fen2[128];
+  Board board = fen_to_board(fen);
+  Move move = (Move) {7, 4, 7, 2};
+
+  Piece piece_taken = apply_move(&board, move);
+  reverse_move(&board, move, piece_taken);
+  board_to_fen(board, fen2);
+
+  TEST_ASSERT_EQUAL_STRING(fen, fen2);
+}
+
 void test_check_start_pos(void) {
   Board board = get_start_pos();
 
@@ -608,6 +686,13 @@ int main(void) {
   RUN_TEST(test_apply_move_promotion_rook_black);
   RUN_TEST(test_apply_move_promotion_queen_white);
   RUN_TEST(test_apply_move_promotion_queen_black);
+
+  RUN_TEST(test_reverse_move_en_passant_white);
+  RUN_TEST(test_reverse_move_en_passant_black);
+  RUN_TEST(test_reverse_move_castle_k_white);
+  RUN_TEST(test_reverse_move_castle_k_black);
+  RUN_TEST(test_reverse_move_castle_q_white);
+  RUN_TEST(test_reverse_move_castle_q_black);
 
   RUN_TEST(test_check_start_pos);
   RUN_TEST(test_check_pawn_1_white);
