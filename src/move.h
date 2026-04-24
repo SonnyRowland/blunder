@@ -16,7 +16,8 @@ typedef struct {
   int count;
 } MoveList;
 
-void apply_move(Board* board, Move move);
+Piece apply_move(Board* board, Move move);
+void reverse_move(Board* board, Move move, Piece piece_taken);
 bool is_player_in_check(Board board);
 
 #endif

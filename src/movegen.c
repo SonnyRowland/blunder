@@ -340,35 +340,9 @@ static void generate_promotion_moves(int rank, int file, Board board,
 }
 
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move) {
-  // Check whether it leaves king in check
-  Piece temp_piece = board->grid[move.to_rank][move.to_file];
-  apply_move(board, move);
+  Piece piece_taken = apply_move(board, move);
   if (!is_in_check(*board)) {
     move_list->moves[move_list->count++] = move;
   }
-
-  Move reverse_move =
-      (Move){move.to_rank, move.to_file, move.from_rank, move.from_file};
-  apply_move(board, reverse_move);
-  board->grid[move.to_rank][move.to_file] = temp_piece;
-
-  // Reverse castle move
-  bool is_castle =
-      (abs(board->grid[move.from_rank][move.from_file]) == W_KING) &&
-      (abs(move.to_file - move.from_file) == 2);
-  if (is_castle) {
-    if (board->turn == 1) {
-      if (move.to_file > move.from_file) {
-        board->grid[0][7] = W_ROOK;
-      } else {
-        board->grid[0][0] = W_ROOK;
-      }
-    } else {
-      if (move.to_file > move.from_file) {
-        board->grid[7][7] = B_ROOK;
-      } else {
-        board->grid[7][0] = B_ROOK;
-      }
-    }
-  }
+  reverse_move(board, move, piece_taken);
 }
