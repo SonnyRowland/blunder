@@ -28,7 +28,7 @@ Board fen_to_board(const char* fen) {
 
   int rank = 7;
   int file = 0;
-  int emptySquares;
+  int empty_squares;
   int i = 0;
 
   // Fill grid with pieces
@@ -39,9 +39,9 @@ Board fen_to_board(const char* fen) {
       board.grid[rank][file] = fen_to_piece[fen[i]];
       file++;
     } else if ('/' < fen[i] && fen[i] < 'A') {
-      emptySquares = fen[i] - '0';
+      empty_squares = fen[i] - '0';
 
-      for (int j = 0; j < emptySquares; j++) {
+      for (int j = 0; j < empty_squares; j++) {
         board.grid[rank][file] = EMPTY;
         file++;
       }
@@ -112,82 +112,82 @@ Board fen_to_board(const char* fen) {
 }
 
 void board_to_fen(Board board, char* fen) {
-  int emptyCounter = 0;
-  int fenPointer = 0;
+  int empty_counter = 0;
+  int fen_pointer = 0;
 
   for (int i = 7; i >= 0; i--) {
     for (int j = 0; j < 8; j++) {
-      // Flush emptyCounter on first rank and write to FEN string
+      // Flush empty_counter on first rank and write to FEN string
       if (j == 0 && i != 7) {
-        if (emptyCounter) {
-          fen[fenPointer++] = (char)('0' + emptyCounter);
-          emptyCounter = 0;
+        if (empty_counter) {
+          fen[fen_pointer++] = (char)('0' + empty_counter);
+          empty_counter = 0;
         }
-        fen[fenPointer++] = '/';
+        fen[fen_pointer++] = '/';
       }
 
       if (board.grid[i][j] == EMPTY) {
-        emptyCounter++;
+        empty_counter++;
       } else {
-        if (emptyCounter) {
-          fen[fenPointer++] = (char)('0' + emptyCounter);
-          emptyCounter = 0;
+        if (empty_counter) {
+          fen[fen_pointer++] = (char)('0' + empty_counter);
+          empty_counter = 0;
         }
-        fen[fenPointer++] = piece_to_fen[board.grid[i][j] + 6];
+        fen[fen_pointer++] = piece_to_fen[board.grid[i][j] + 6];
       }
     }
   }
 
   // Flush any remaining empty squares from the last rank
-  if (emptyCounter) {
-    fen[fenPointer++] = (char)('0' + emptyCounter);
+  if (empty_counter) {
+    fen[fen_pointer++] = (char)('0' + empty_counter);
   }
 
   // Write game meta data to FEN string
-  fen[fenPointer++] = ' ';
+  fen[fen_pointer++] = ' ';
 
   if (board.turn == 1) {
-    fen[fenPointer++] = 'w';
+    fen[fen_pointer++] = 'w';
   } else {
-    fen[fenPointer++] = 'b';
+    fen[fen_pointer++] = 'b';
   }
 
-  fen[fenPointer++] = ' ';
+  fen[fen_pointer++] = ' ';
 
   bool no_castling_rights = true;
 
   if (board.castle_wk) {
-    fen[fenPointer++] = 'K';
+    fen[fen_pointer++] = 'K';
     no_castling_rights = false;
   }
   if (board.castle_wq) {
-    fen[fenPointer++] = 'Q';
+    fen[fen_pointer++] = 'Q';
     no_castling_rights = false;
   }
   if (board.castle_bk) {
-    fen[fenPointer++] = 'k';
+    fen[fen_pointer++] = 'k';
     no_castling_rights = false;
   }
   if (board.castle_bq) {
-    fen[fenPointer++] = 'q';
+    fen[fen_pointer++] = 'q';
     no_castling_rights = false;
   }
 
-  if (no_castling_rights) fen[fenPointer++] = '-';
+  if (no_castling_rights) fen[fen_pointer++] = '-';
 
-  fen[fenPointer++] = ' ';
+  fen[fen_pointer++] = ' ';
 
   if (board.ep_file == -1) {
-    fen[fenPointer++] = '-';
+    fen[fen_pointer++] = '-';
   } else {
-    fen[fenPointer++] = (char)(board.ep_file + 'a');
-    fen[fenPointer++] = (char)('1' + board.ep_rank);
+    fen[fen_pointer++] = (char)(board.ep_file + 'a');
+    fen[fen_pointer++] = (char)('1' + board.ep_rank);
   }
 
-  fen[fenPointer++] = ' ';
+  fen[fen_pointer++] = ' ';
 
-  fenPointer += sprintf(&fen[fenPointer], "%d", board.halfmove_clock);
-  fen[fenPointer++] = ' ';
-  fenPointer += sprintf(&fen[fenPointer], "%d", board.fullmove_count);
-  fen[fenPointer++] = '\0';
+  fen_pointer += sprintf(&fen[fen_pointer], "%d", board.halfmove_clock);
+  fen[fen_pointer++] = ' ';
+  fen_pointer += sprintf(&fen[fen_pointer], "%d", board.fullmove_count);
+  fen[fen_pointer++] = '\0';
 }
