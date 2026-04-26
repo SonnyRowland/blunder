@@ -253,9 +253,10 @@ void test_reverse_move_promotion_knight_black(void){
   reverse_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
+  printf("%s\n", fen2);
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
-  TEST_ASSERT_EQUAL_INT(B_PAWN, board.grid[6][4]);
-  TEST_ASSERT_EQUAL_INT(EMPTY, board.grid[7][4]);
+  TEST_ASSERT_EQUAL_INT(B_PAWN, board.grid[1][7]);
+  TEST_ASSERT_EQUAL_INT(EMPTY, board.grid[0][7]);
 }
 
 void test_check_start_pos(void) {

@@ -12,11 +12,13 @@ TEST_SRCS = src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eva
 
 .PHONY: test
 test:
-	@for f in tests/test_*.c; do \
+	@status=0; \
+	for f in tests/test_*.c; do \
 		bin=$$(basename $$f .c); \
 		cc -Isrc -Iunity -o tests/$$bin $$f $(TEST_SRCS) $(UNITY) && \
-		./tests/$$bin; \
-	done
+		./tests/$$bin || status=1; \
+	done; \
+	exit $$status
 
 .PHONY: format
 format:
