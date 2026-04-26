@@ -138,6 +138,11 @@ void board_to_fen(Board board, char* fen) {
     }
   }
 
+  // Flush any remaining empty squares from the last rank
+  if (emptyCounter) {
+    fen[fenPointer++] = (char)('0' + emptyCounter);
+  }
+
   // Write game meta data to FEN string
   fen[fenPointer++] = ' ';
 

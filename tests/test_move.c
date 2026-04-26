@@ -228,6 +228,36 @@ void test_reverse_move_castle_q_black(void) {
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
 }
 
+void test_reverse_move_promotion_knight_white(void) {
+  const char* fen = "8/4P3/8/8/8/8/8/8 w - - 0 1";
+  char fen2[128];
+  Board board = fen_to_board(fen);
+  Move move = (Move) {6, 4, 7, 4, 2};
+
+  Piece piece_taken = apply_move(&board, move);
+  reverse_move(&board, move, piece_taken);
+  board_to_fen(board, fen2);
+
+  TEST_ASSERT_EQUAL_STRING(fen, fen2);
+  TEST_ASSERT_EQUAL_INT(W_PAWN, board.grid[6][4]);
+  TEST_ASSERT_EQUAL_INT(EMPTY, board.grid[7][4]);
+}
+
+void test_reverse_move_promotion_knight_black(void){
+  const char* fen = "8/8/8/8/8/8/7p/8 b - - 0 1";
+  char fen2[128];
+  Board board = fen_to_board(fen);
+  Move move = (Move) {1, 7, 0, 7, -2};
+
+  Piece piece_taken = apply_move(&board, move);
+  reverse_move(&board, move, piece_taken);
+  board_to_fen(board, fen2);
+
+  TEST_ASSERT_EQUAL_STRING(fen, fen2);
+  TEST_ASSERT_EQUAL_INT(B_PAWN, board.grid[6][4]);
+  TEST_ASSERT_EQUAL_INT(EMPTY, board.grid[7][4]);
+}
+
 void test_check_start_pos(void) {
   Board board = get_start_pos();
 
@@ -693,6 +723,18 @@ int main(void) {
   RUN_TEST(test_reverse_move_castle_k_black);
   RUN_TEST(test_reverse_move_castle_q_white);
   RUN_TEST(test_reverse_move_castle_q_black);
+  RUN_TEST(test_reverse_move_promotion_knight_white);
+  RUN_TEST(test_reverse_move_promotion_knight_black);
+  
+  // TODO PICKUP: write the tests below
+  
+  // RUN_TEST(test_reverse_move_promotion_bishop_white);
+  // RUN_TEST(test_reverse_move_promotion_bishop_black);
+  // RUN_TEST(test_reverse_move_promotion_bishop_white);
+  // RUN_TEST(test_reverse_move_promotion_rook_white);
+  // RUN_TEST(test_reverse_move_promotion_rook_black);
+  // RUN_TEST(test_reverse_move_promotion_queen_white);
+  // RUN_TEST(test_reverse_move_promotion_queen_black);
 
   RUN_TEST(test_check_start_pos);
   RUN_TEST(test_check_pawn_1_white);
