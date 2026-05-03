@@ -14,5 +14,8 @@ blunder
 *.app
 tests/test_*
 !tests/test_*.c 
+build/artefacts/*
+
+
 # Personal files
 BACKLOG.md
