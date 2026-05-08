@@ -1,12 +1,23 @@
 #include <stdio.h>
 
-#include "board.h"
-#include "display.h"
-#include "fen.h"
-#include "move.h"
+#include "uci.h"
 
-int main(void) {
-  Board board = fen_to_board("8/8/8/8/8/8/7Q/6k1 b - - 0 1");
+#define UCI_BUF_SIZE 512
 
-  printf("is in check? %i\n", is_in_check(board));
+static void gameloop(FILE* in, FILE* out);
+
+int main(void) { gameloop(stdin, stdout); }
+
+static void gameloop(FILE* in, FILE* out) {
+  char buf[UCI_BUF_SIZE];
+
+  for (;;) {
+    char* input = fgets(buf, UCI_BUF_SIZE, in);
+    if (!input) {
+      return;
+    } else {
+      dispatch(buf, out);
+      fflush(out);
+    }
+  }
 }
