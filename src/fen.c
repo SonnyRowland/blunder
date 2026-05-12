@@ -5,9 +5,10 @@
 
 #include "board.h"
 
-char start_pos[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const char start_pos[] =
+    "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-static const Piece fen_to_piece[128] = {
+const Piece fen_to_piece[128] = {
     ['k'] = B_KING,   ['q'] = B_QUEEN, ['r'] = B_ROOK,  ['b'] = B_BISHOP,
     ['n'] = B_KNIGHT, ['p'] = B_PAWN,  ['P'] = W_PAWN,  ['N'] = W_KNIGHT,
     ['B'] = W_BISHOP, ['R'] = W_ROOK,  ['Q'] = W_QUEEN, ['K'] = W_KING,

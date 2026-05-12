@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include "unity.h"
 #include "move.h"
 #include "fen.h"
@@ -5,6 +7,16 @@
 
 void setUp(void) {}
 void tearDown(void) {}
+
+// Helper function for checking two Move structs are equal
+static bool moves_equal(Move move1, Move move2){
+  if (move1.from_rank != move2.from_rank) return 0;
+  if (move1.from_file != move2.from_file) return 0;
+  if (move1.to_rank != move2.to_rank) return 0;
+  if (move1.to_file != move2.to_file) return 0;
+  if (move1.promotion != move2.promotion) return 0;
+  return 1;
+}
 
 void test_make_move_en_passant_white(void) {
   const char* fen = "rnbqkbnr/1pp1pppp/p7/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3";
@@ -1037,6 +1049,86 @@ void test_check_queen_rank_increase_file_increase_black(void) {
   TEST_ASSERT_TRUE(is_in_check(board));
 }
 
+void test_lan_opening_move_white(void){
+  const char* lan = "e2e4";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){1, 4, 3, 4, 0};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_opening_move_black(void){
+  const char* lan = "d7d5";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){6, 3, 4, 3, 0};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_promotion_knight_white(void){
+  const char* lan = "a7a8n";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){6, 0, 7, 0, 2};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_promotion_knight_black(void){
+  const char* lan = "c2c1n";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){1, 2, 0, 2, -2};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_promotion_bishop_white(void){
+  const char* lan = "g7g8b";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){6, 6, 7, 6, 3};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_promotion_bishop_black(void){
+  const char* lan = "f2f1b";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){1, 5, 0, 5, -3};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_promotion_rook_white(void){
+  const char* lan = "b7b8r";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){6, 1, 7, 1, 4};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_promotion_rook_black(void){
+  const char* lan = "e2e1r";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){1, 4, 0, 4, -4};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_promotion_queen_white(void){
+  const char* lan = "d7d8q";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){6, 3, 7, 3, 5};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_promotion_queen_black(void){
+  const char* lan = "h2h1q";
+  Move returned_move = move_from_lan(lan);
+  Move expected_move = (Move){1, 7, 0, 7, -5};
+
+  TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
 int main(void) {
   UNITY_BEGIN();
 
@@ -1154,6 +1246,17 @@ int main(void) {
   RUN_TEST(test_check_queen_rank_increase_file_decrease_black);
   RUN_TEST(test_check_queen_rank_increase_file_increase_white);
   RUN_TEST(test_check_queen_rank_increase_file_increase_black);
+
+  RUN_TEST(test_lan_opening_move_white);
+  RUN_TEST(test_lan_opening_move_black);
+  RUN_TEST(test_lan_promotion_knight_white);
+  RUN_TEST(test_lan_promotion_knight_black);
+  RUN_TEST(test_lan_promotion_bishop_white);
+  RUN_TEST(test_lan_promotion_bishop_black);
+  RUN_TEST(test_lan_promotion_rook_white);
+  RUN_TEST(test_lan_promotion_rook_black);
+  RUN_TEST(test_lan_promotion_queen_white);
+  RUN_TEST(test_lan_promotion_queen_black);
 
   return UNITY_END();
 }

@@ -3,8 +3,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "board.h"
+#include "fen.h"
 
 Piece make_move(Board* board, Move move) {
   Piece piece = board->grid[move.from_rank][move.from_file];
@@ -130,4 +132,22 @@ void reverse_move(Board* board, Move move, Piece piece_taken) {
         (Piece)(-turn_sign(board->turn));
     board->grid[move.to_rank][move.to_file] = piece_taken;
   }
+}
+
+Move move_from_lan(const char* lan) {
+  Move move;
+
+  move.from_rank = (int)(lan[1] - '1');
+  move.from_file = (int)(lan[0] - 'a');
+  move.to_rank = (int)(lan[3] - '1');
+  move.to_file = (int)(lan[2] - 'a');
+  move.promotion = 0;
+
+  if (strlen(lan) == 5) {
+    move.promotion = fen_to_piece[lan[4]];
+
+    if (move.to_rank == 7) move.promotion *= -1;
+  }
+
+  return move;
 }
