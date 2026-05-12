@@ -19,5 +19,6 @@ typedef struct {
 Piece make_move(Board* board, Move move);
 void commit_move(Board* board, Move move);
 void reverse_move(Board* board, Move move, Piece piece_taken);
+Move move_from_lan(const char* lan);
 
 #endif

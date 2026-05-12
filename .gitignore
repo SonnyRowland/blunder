@@ -15,7 +15,9 @@ blunder
 tests/test_*
 !tests/test_*.c 
 build/artefacts/*
+assets/engine-interface.txt
 .DS_Store
+
 
 # Personal files
 BACKLOG.md

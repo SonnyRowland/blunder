@@ -6,7 +6,12 @@
 
 static void gameloop(FILE* in, FILE* out);
 
+#ifdef DEBUG
+int main(void) { printf("debug\n"); }
+
+#else
 int main(void) { gameloop(stdin, stdout); }
+#endif
 
 static void gameloop(FILE* in, FILE* out) {
   char buf[UCI_BUF_SIZE];

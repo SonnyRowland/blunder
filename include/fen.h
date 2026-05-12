@@ -3,7 +3,8 @@
 
 #include "board.h"
 
-extern char start_pos[];
+extern const char start_pos[];
+extern const Piece fen_to_piece[128];
 
 void board_to_fen(Board board, char* fen);
 Board fen_to_board(const char* fen);
