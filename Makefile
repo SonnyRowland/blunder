@@ -13,6 +13,11 @@ $(ARTEFACTS)/$(TARGET): $(SRCS)
 UNITY = vendor/unity/unity.c
 TEST_SRCS = src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c
 
+.PHONY: debug
+debug: $(SRCS)
+	mkdir -p $(ARTEFACTS)
+	cc $(INCLUDES) -DDEBUG -o $(ARTEFACTS)/$(TARGET) $(SRCS)
+
 .PHONY: test
 test:
 	@mkdir -p $(ARTEFACTS); \
