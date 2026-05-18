@@ -2,4 +2,4 @@
 
 #include <stdio.h>
 
-void dispatch(char* buf, FILE* out);
+void dispatch(char* buf, FILE* out, Board* board);
