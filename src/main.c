@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "board.h"
 #include "uci.h"
 
 #define UCI_BUF_SIZE 512
@@ -14,6 +15,7 @@ int main(void) { gameloop(stdin, stdout); }
 #endif
 
 static void gameloop(FILE* in, FILE* out) {
+  Board board = {0};
   char buf[UCI_BUF_SIZE];
 
   for (;;) {
@@ -21,7 +23,7 @@ static void gameloop(FILE* in, FILE* out) {
     if (!input) {
       return;
     } else {
-      dispatch(buf, out);
+      dispatch(buf, out, &board);
       fflush(out);
     }
   }
