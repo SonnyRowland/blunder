@@ -16,7 +16,8 @@ typedef struct {
   int count;
 } MoveList;
 
-Piece apply_move(Board* board, Move move);
+Piece make_move(Board* board, Move move);
+void commit_move(Board* board, Move move);
 void reverse_move(Board* board, Move move, Piece piece_taken);
 
 #endif
