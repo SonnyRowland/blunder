@@ -17,7 +17,7 @@ Move get_best_move(Board* board, int depth) {
   if (board->turn == 1) {
     best = INT_MIN;
     for (int i = 0; i < move_list.count; i++) {
-      Piece piece_taken = apply_move(board, move_list.moves[i]);
+      Piece piece_taken = make_move(board, move_list.moves[i]);
       int val = alphabeta(board, depth - 1, alpha, beta);
       if (val > best) {
         best = val;
@@ -30,7 +30,7 @@ Move get_best_move(Board* board, int depth) {
   } else {
     best = INT_MAX;
     for (int i = 0; i < move_list.count; i++) {
-      Piece piece_taken = apply_move(board, move_list.moves[i]);
+      Piece piece_taken = make_move(board, move_list.moves[i]);
       int val = alphabeta(board, depth - 1, alpha, beta);
       if (val < best) {
         best = val;
@@ -53,7 +53,7 @@ static int alphabeta(Board* board, int depth, int alpha, int beta) {
   if (board->turn == 1) {
     int best = INT_MIN;
     for (int i = 0; i < move_list.count; i++) {
-      Piece piece_taken = apply_move(board, move_list.moves[i]);
+      Piece piece_taken = make_move(board, move_list.moves[i]);
       int val = alphabeta(board, depth - 1, alpha, beta);
       reverse_move(board, move_list.moves[i], piece_taken);
       if (val > best) best = val;
@@ -64,7 +64,7 @@ static int alphabeta(Board* board, int depth, int alpha, int beta) {
   } else {
     int best = INT_MAX;
     for (int i = 0; i < move_list.count; i++) {
-      Piece piece_taken = apply_move(board, move_list.moves[i]);
+      Piece piece_taken = make_move(board, move_list.moves[i]);
       int val = alphabeta(board, depth - 1, alpha, beta);
       reverse_move(board, move_list.moves[i], piece_taken);
       if (val < best) best = val;

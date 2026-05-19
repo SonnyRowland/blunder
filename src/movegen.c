@@ -264,23 +264,23 @@ static void generate_castling_moves(int rank, int file, Board board,
       board.grid[rank][file + 2] == EMPTY) {
     // Prevent castle through check
     temp_move = (Move){rank, file, rank, file + 1};
-    apply_move(&board, temp_move);
+    make_move(&board, temp_move);
     if (is_in_check(board)) {
       temp_move = (Move){rank, file + 1, rank, file};
-      apply_move(&board, temp_move);
+      make_move(&board, temp_move);
       move_through_check = true;
     }
 
     temp_move = (Move){rank, file + 1, rank, file + 2};
-    apply_move(&board, temp_move);
+    make_move(&board, temp_move);
     if (is_in_check(board)) {
       temp_move = (Move){rank, file + 2, rank, file};
-      apply_move(&board, temp_move);
+      make_move(&board, temp_move);
       move_through_check = true;
     }
 
     temp_move = (Move){rank, file + 2, rank, file};
-    apply_move(&board, temp_move);
+    make_move(&board, temp_move);
 
     if (!move_through_check) {
       temp_move = (Move){rank, file, rank, file + 2};
@@ -292,23 +292,23 @@ static void generate_castling_moves(int rank, int file, Board board,
   if (can_castle_q && board.grid[rank][file - 1] == EMPTY &&
       board.grid[rank][file - 2] == EMPTY) {
     Move temp_move = (Move){rank, file, rank, file - 1};
-    apply_move(&board, temp_move);
+    make_move(&board, temp_move);
     if (is_in_check(board)) {
       temp_move = (Move){rank, file - 1, rank, file};
-      apply_move(&board, temp_move);
+      make_move(&board, temp_move);
       move_through_check = true;
     }
 
     temp_move = (Move){rank, file - 1, rank, file - 2};
-    apply_move(&board, temp_move);
+    make_move(&board, temp_move);
     if (is_in_check(board)) {
       temp_move = (Move){rank, file - 2, rank, file};
-      apply_move(&board, temp_move);
+      make_move(&board, temp_move);
       move_through_check = true;
     }
 
     temp_move = (Move){rank, file - 2, rank, file};
-    apply_move(&board, temp_move);
+    make_move(&board, temp_move);
 
     if (!move_through_check) {
       temp_move = (Move){rank, file, rank, file - 2};
@@ -340,7 +340,7 @@ static void generate_promotion_moves(int rank, int file, Board board,
 }
 
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move) {
-  Piece piece_taken = apply_move(board, move);
+  Piece piece_taken = make_move(board, move);
   if (!is_in_check(*board)) {
     move_list->moves[move_list->count++] = move;
   }

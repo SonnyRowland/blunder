@@ -6,7 +6,7 @@
 
 #include "board.h"
 
-Piece apply_move(Board* board, Move move) {
+Piece make_move(Board* board, Move move) {
   Piece piece = board->grid[move.from_rank][move.from_file];
   Piece piece_taken = board->grid[move.to_rank][move.to_file];
   board->grid[move.to_rank][move.to_file] = piece;
@@ -34,6 +34,62 @@ Piece apply_move(Board* board, Move move) {
   if (move.promotion) board->grid[move.to_rank][move.to_file] = move.promotion;
 
   return piece_taken;
+}
+
+// Use make_move() then update game metadata
+void commit_move(Board* board, Move move) {
+  Piece piece = board->grid[move.from_rank][move.from_file];
+  bool halfmove_reset =
+      board->grid[move.to_rank][move.to_file] != EMPTY || abs(piece) == W_PAWN;
+
+  Piece piece_taken = make_move(board, move);
+
+  // Update castling rights game metadata
+  bool is_castle =
+      (abs(piece) == W_KING) && (abs(move.from_file - move.to_file) == 2);
+
+  if (is_castle) {
+    if (board->turn == 1) {
+      board->castle_wk = 0;
+      board->castle_wq = 0;
+    } else {
+      board->castle_bk = 0;
+      board->castle_bq = 0;
+    }
+  } else {
+    if (piece == W_ROOK && board->turn == 1 && move.from_rank == 0) {
+      if (move.from_file == 0)
+        board->castle_wq = 0;
+      else if (move.from_file == 7)
+        board->castle_wk = 0;
+    } else if (piece == B_ROOK && board->turn == -1 && move.from_rank == 7) {
+      if (move.from_file == 0) board->castle_bq = 0;
+      if (move.from_file == 7) board->castle_bk = 0;
+    } else if (piece == W_KING) {
+      board->castle_wk = 0;
+      board->castle_wq = 0;
+    } else if (piece == B_KING) {
+      board->castle_bk = 0;
+      board->castle_bq = 0;
+    }
+  }
+
+  // Update en passant metadata
+  bool is_double_push =
+      abs(piece) == W_PAWN && abs(move.from_rank - move.to_rank) == 2;
+
+  board->ep_rank = is_double_push ? move.from_rank + board->turn : -1;
+  board->ep_file = is_double_push ? move.from_file : -1;
+
+  // Update move clock metadata
+  if (halfmove_reset)
+    board->halfmove_clock = 0;
+  else
+    board->halfmove_clock++;
+
+  if (board->turn == -1) board->fullmove_count++;
+
+  board->turn *= -1;
 }
 
 void reverse_move(Board* board, Move move, Piece piece_taken) {
