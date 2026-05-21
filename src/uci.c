@@ -77,7 +77,7 @@ static void handle_position(char* args, FILE* out, Board* board) {
       if (token && strcmp(token, "moves") == 0) {
         token = strtok(NULL, " \n");
         while (token) {
-          apply_move(board, move_from_lan(token));
+          commit_move(board, move_from_lan(token));
           token = strtok(NULL, " \n");
         }
       } else {
@@ -96,7 +96,7 @@ static void handle_position(char* args, FILE* out, Board* board) {
       if (token && strcmp(token, "oves") == 0) {
         token = strtok(NULL, " \n");
         while (token) {
-          apply_move(board, move_from_lan(token));
+          commit_move(board, move_from_lan(token));
           token = strtok(NULL, " \n");
         }
       }
