@@ -118,7 +118,7 @@ int main(void){
   RUN_TEST(test_dispatch_isready);
   RUN_TEST(test_position_startpos);
   RUN_TEST(test_position_startpos_qgd);
-  // RUN_TEST(test_position_startpos_en_passant);
+  RUN_TEST(test_position_startpos_en_passant);
   RUN_TEST(test_position_fen_two_knights);
   RUN_TEST(test_position_fen_en_passant);
 
