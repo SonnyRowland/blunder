@@ -14,7 +14,7 @@ Move get_best_move(Board* board, int depth) {
   int alpha = INT_MIN;
   int beta = INT_MAX;
 
-  if (board->turn == 1) {
+  if (board->turn == TURN_WHITE) {
     best = INT_MIN;
     for (int i = 0; i < move_list.count; i++) {
       Piece piece_taken = make_move(board, move_list.moves[i]);
@@ -50,7 +50,7 @@ static int alphabeta(Board* board, int depth, int alpha, int beta) {
 
   MoveList move_list = generate_legal_moves(*board);
 
-  if (board->turn == 1) {
+  if (board->turn == TURN_WHITE) {
     int best = INT_MIN;
     for (int i = 0; i < move_list.count; i++) {
       Piece piece_taken = make_move(board, move_list.moves[i]);
