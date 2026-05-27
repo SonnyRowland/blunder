@@ -4,6 +4,7 @@
 #include "display.h"
 #include "fen.h"
 #include "move.h"
+#include "timemanager.h"
 
 #define BUF_SIZE 512
 
@@ -12,6 +13,7 @@ typedef void (*handler_fn)(char* args, FILE* out, Board* board);
 static void handle_uci(char* args, FILE* out, Board* board);
 static void handle_isready(char* args, FILE* out, Board* board);
 static void handle_position(char* args, FILE* out, Board* board);
+static void handle_go(char* args, FILE* out, Board* board);
 
 typedef struct {
   const char* cmd;
@@ -22,6 +24,7 @@ const Command commands[] = {
     {"uci", handle_uci},
     {"isready", handle_isready},
     {"position", handle_position},
+    {"go", handle_go},
 };
 
 void dispatch(char* buf, FILE* out, Board* board) {
@@ -66,10 +69,9 @@ static void handle_isready(char* args, FILE* out, Board* board) {
 static void handle_position(char* args, FILE* out, Board* board) {
   if (args) {
     char* token = strtok(args, " \n");
-    if (!token) return;
 
     // Parse 'startpos' argument
-    if (strcmp(token, "startpos") == 0) {
+    if (token && strcmp(token, "startpos") == 0) {
       *board = get_start_pos();
       token = strtok(NULL, " \n");
 
@@ -85,7 +87,7 @@ static void handle_position(char* args, FILE* out, Board* board) {
       }
 
       // Parse 'fen' argument
-    } else if (strcmp(token, "fen") == 0) {
+    } else if (token && strcmp(token, "fen") == 0) {
       // Tokenise fen string
       token = strtok(NULL, "m\n");
       token[strlen(token) - 1] = '\0';
@@ -102,4 +104,8 @@ static void handle_position(char* args, FILE* out, Board* board) {
       }
     }
   }
+}
+
+static void handle_go(char* args, FILE* out, Board* board) {
+  timemanager_go(board, args);
 }
