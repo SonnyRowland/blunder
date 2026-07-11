@@ -16,6 +16,7 @@ tests/test_*
 !tests/test_*.c 
 build/artefacts/*
 .DS_Store
+.vscode/
 
 # Personal files
 BACKLOG.md

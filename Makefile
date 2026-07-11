@@ -27,3 +27,13 @@ test:
 .PHONY: format
 format:
 	clang-format --style=Google -i $(SRCS)
+
+CFLAGS = -Wall -Wextra
+DEBUG_FLAGS = -g -O0
+
+.PHONY: debug
+debug: $(ARTEFACTS)/$(TARGET)-debug
+
+$(ARTEFACTS)/$(TARGET)-debug: $(SRCS)
+	mkdir -p $(ARTEFACTS)
+	cc $(INCLUDES) $(CFLAGS) $(DEBUG_FLAGS) -o $@ $(SRCS)
