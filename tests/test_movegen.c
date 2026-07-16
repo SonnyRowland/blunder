@@ -573,6 +573,26 @@ void test_move_gen_castle_k_blocked_q_black(void) {
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move2));
 }
 
+void test_move_gen_castle_blocked_q_white_near_rook(void){
+  const char* fen = "8/8/8/8/8/8/8/RP2K2R w KQ - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  Move test_move = (Move) {0, 4, 0, 2};
+
+  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+}
+
+void test_move_gen_castle_blocked_q_black_near_rook(void){
+  const char* fen = "rp2k2r/8/8/8/8/8/8/8 b kq - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  Move test_move = (Move) {7, 4, 7, 2};
+
+  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+}
+
 void test_move_gen_promotion_white(void) {
   const char* fen = "8/4P3/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
@@ -610,6 +630,8 @@ void test_move_gen_promotion_on_capture_black(void){
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
   TEST_ASSERT_EQUAL_INT(8, moves.count);
 }
+
+
 
 int main(void) {
   UNITY_BEGIN();
@@ -671,6 +693,8 @@ int main(void) {
   RUN_TEST(test_move_gen_castle_k_q_white);
   RUN_TEST(test_move_gen_castle_k_blocked_q_white);
   RUN_TEST(test_move_gen_castle_k_blocked_q_black);
+  RUN_TEST(test_move_gen_castle_blocked_q_white_near_rook);
+  RUN_TEST(test_move_gen_castle_blocked_q_black_near_rook);
   RUN_TEST(test_move_gen_promotion_white);
   RUN_TEST(test_move_gen_promotion_black);
   RUN_TEST(test_move_gen_promotion_on_capture_white);

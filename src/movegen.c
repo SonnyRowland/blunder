@@ -18,10 +18,8 @@ static void generate_king_moves(int rank, int file, Board board,
                                 MoveList* move_list);
 static void generate_castling_moves(int rank, int file, Board board,
                                     MoveList* move_list);
-
 static void generate_promotion_moves(int rank, int file, Board board,
                                      MoveList* move_list);
-
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move);
 
 MoveList generate_legal_moves(Board board) {
@@ -250,8 +248,6 @@ static void generate_king_moves(int rank, int file, Board board,
 
 static void generate_castling_moves(int rank, int file, Board board,
                                     MoveList* move_list) {
-  Move temp_move;
-
   // Prevent castle out of check
   if (is_in_check(board)) return;
 
@@ -263,56 +259,49 @@ static void generate_castling_moves(int rank, int file, Board board,
   if (can_castle_k && board.grid[rank][file + 1] == EMPTY &&
       board.grid[rank][file + 2] == EMPTY) {
     // Prevent castle through check
-    temp_move = (Move){rank, file, rank, file + 1};
-    make_move(&board, temp_move);
+    Move temp_move1 = (Move){rank, file, rank, file + 1};
+    Piece piece_taken1 = make_move(&board, temp_move1);
     if (is_in_check(board)) {
-      temp_move = (Move){rank, file + 1, rank, file};
-      make_move(&board, temp_move);
       move_through_check = true;
     }
 
-    temp_move = (Move){rank, file + 1, rank, file + 2};
-    make_move(&board, temp_move);
+    Move temp_move2 = (Move){rank, file + 1, rank, file + 2};
+    Piece piece_taken2 = make_move(&board, temp_move2);
     if (is_in_check(board)) {
-      temp_move = (Move){rank, file + 2, rank, file};
-      make_move(&board, temp_move);
       move_through_check = true;
     }
 
-    temp_move = (Move){rank, file + 2, rank, file};
-    make_move(&board, temp_move);
+    reverse_move(&board, temp_move2, piece_taken2);
+    reverse_move(&board, temp_move1, piece_taken1);
 
     if (!move_through_check) {
-      temp_move = (Move){rank, file, rank, file + 2};
-      add_move_if_legal(move_list, &board, temp_move);
+      Move castling_move = (Move){rank, file, rank, file + 2};
+      add_move_if_legal(move_list, &board, castling_move);
     }
   }
 
   move_through_check = false;
   if (can_castle_q && board.grid[rank][file - 1] == EMPTY &&
-      board.grid[rank][file - 2] == EMPTY) {
-    Move temp_move = (Move){rank, file, rank, file - 1};
-    make_move(&board, temp_move);
+      board.grid[rank][file - 2] == EMPTY &&
+      board.grid[rank][file - 3] == EMPTY) {
+    Move temp_move1 = (Move){rank, file, rank, file - 1};
+    Piece piece_taken1 = make_move(&board, temp_move1);
     if (is_in_check(board)) {
-      temp_move = (Move){rank, file - 1, rank, file};
-      make_move(&board, temp_move);
       move_through_check = true;
     }
 
-    temp_move = (Move){rank, file - 1, rank, file - 2};
-    make_move(&board, temp_move);
+    Move temp_move2 = (Move){rank, file - 1, rank, file - 2};
+    Piece piece_taken2 = make_move(&board, temp_move2);
     if (is_in_check(board)) {
-      temp_move = (Move){rank, file - 2, rank, file};
-      make_move(&board, temp_move);
       move_through_check = true;
     }
 
-    temp_move = (Move){rank, file - 2, rank, file};
-    make_move(&board, temp_move);
+    reverse_move(&board, temp_move2, piece_taken2);
+    reverse_move(&board, temp_move1, piece_taken1);
 
     if (!move_through_check) {
-      temp_move = (Move){rank, file, rank, file - 2};
-      add_move_if_legal(move_list, &board, temp_move);
+      Move castling_move = (Move){rank, file, rank, file - 2};
+      add_move_if_legal(move_list, &board, castling_move);
     }
   }
 }
