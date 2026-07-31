@@ -16,9 +16,18 @@ typedef struct {
   int count;
 } MoveList;
 
-Piece make_move(Board* board, Move move);
-void commit_move(Board* board, Move move);
-void reverse_move(Board* board, Move move, Piece piece_taken);
+typedef struct {
+  Piece piece_taken;
+  int castle_wk, castle_wq, castle_bk, castle_bq;
+  int ep_rank, ep_file;
+  int halfmove_clock;
+  int fullmove_count;
+} Undo;
+
+Piece apply_move(Board* board, Move move);
+void revert_move(Board* board, Move move, Piece piece_taken);
+void make_move(Board* board, Move move, Undo* undo);
+void unmake_move(Board* board, Move move, const Undo* undo);
 Move move_from_lan(const char* lan);
 
 #endif

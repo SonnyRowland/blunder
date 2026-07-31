@@ -7,18 +7,26 @@
 #include <string.h>
 #include <time.h>
 
+#include "display.h"
 #include "movesearch.h"
 
 volatile _Atomic int stop_search = 0;
 
 void timer(uint32_t time_ms);
 
-void* search_with_stop_search(void* args) {
-  // TODO: Call some function in movesearch.c to return best move via uci.c
+typedef struct {
+  Board* board;
+} SearchArgs;
+
+void* search_thread(void* args) {
+  SearchArgs* sargs = (SearchArgs*)args;
+  int depth = 7;
+
+  get_best_move(sargs->board, depth);
   return NULL;
 }
 
-void* start_timer(void* args) {
+void* timer_thread(void* args) {
   uint32_t time_ms = (uint32_t)(uintptr_t)args;
   timer(time_ms);
   stop_search = 1;
@@ -35,11 +43,14 @@ void timer(uint32_t time_ms) {
 }
 
 void timemanager_go(Board* board, char* args) {
-  (void)board;
+  *board = get_start_pos();
 
   stop_search = 0;
   char* token = strtok(args, " \n");
-  pthread_t search_thread, timer_thread;
+  pthread_t search_tid, timer_tid;
+
+  SearchArgs* sargs = malloc(sizeof(SearchArgs));
+  sargs->board = board;
 
   if (token && strcmp(token, "movetime") == 0) {
     token = strtok(NULL, " \n");
@@ -47,7 +58,10 @@ void timemanager_go(Board* board, char* args) {
 
     uint32_t time_ms = (uint32_t)strtoul(token, NULL, 10);
 
-    pthread_create(&search_thread, NULL, search_with_stop_search, NULL);
-    pthread_create(&timer_thread, NULL, start_timer, (void*)(uintptr_t)time_ms);
+    pthread_create(&search_tid, NULL, search_thread, sargs);
+    pthread_create(&timer_tid, NULL, timer_thread, (void*)(uintptr_t)time_ms);
+
+  } else if (strcmp(token, "infinite") == 0) {
+    pthread_create(&search_tid, NULL, search_thread, sargs);
   }
 }
