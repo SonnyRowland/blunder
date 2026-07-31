@@ -260,19 +260,19 @@ static void generate_castling_moves(int rank, int file, Board board,
       board.grid[rank][file + 2] == EMPTY) {
     // Prevent castle through check
     Move temp_move1 = (Move){rank, file, rank, file + 1};
-    Piece piece_taken1 = make_move(&board, temp_move1);
+    Piece piece_taken1 = apply_move(&board, temp_move1);
     if (is_in_check(board)) {
       move_through_check = true;
     }
 
     Move temp_move2 = (Move){rank, file + 1, rank, file + 2};
-    Piece piece_taken2 = make_move(&board, temp_move2);
+    Piece piece_taken2 = apply_move(&board, temp_move2);
     if (is_in_check(board)) {
       move_through_check = true;
     }
 
-    reverse_move(&board, temp_move2, piece_taken2);
-    reverse_move(&board, temp_move1, piece_taken1);
+    revert_move(&board, temp_move2, piece_taken2);
+    revert_move(&board, temp_move1, piece_taken1);
 
     if (!move_through_check) {
       Move castling_move = (Move){rank, file, rank, file + 2};
@@ -285,19 +285,19 @@ static void generate_castling_moves(int rank, int file, Board board,
       board.grid[rank][file - 2] == EMPTY &&
       board.grid[rank][file - 3] == EMPTY) {
     Move temp_move1 = (Move){rank, file, rank, file - 1};
-    Piece piece_taken1 = make_move(&board, temp_move1);
+    Piece piece_taken1 = apply_move(&board, temp_move1);
     if (is_in_check(board)) {
       move_through_check = true;
     }
 
     Move temp_move2 = (Move){rank, file - 1, rank, file - 2};
-    Piece piece_taken2 = make_move(&board, temp_move2);
+    Piece piece_taken2 = apply_move(&board, temp_move2);
     if (is_in_check(board)) {
       move_through_check = true;
     }
 
-    reverse_move(&board, temp_move2, piece_taken2);
-    reverse_move(&board, temp_move1, piece_taken1);
+    revert_move(&board, temp_move2, piece_taken2);
+    revert_move(&board, temp_move1, piece_taken1);
 
     if (!move_through_check) {
       Move castling_move = (Move){rank, file, rank, file - 2};
@@ -329,9 +329,9 @@ static void generate_promotion_moves(int rank, int file, Board board,
 }
 
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move) {
-  Piece piece_taken = make_move(board, move);
+  Piece piece_taken = apply_move(board, move);
   if (!is_in_check(*board)) {
     move_list->moves[move_list->count++] = move;
   }
-  reverse_move(board, move, piece_taken);
+  revert_move(board, move, piece_taken);
 }

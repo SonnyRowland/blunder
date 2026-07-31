@@ -8,7 +8,7 @@
 #include "board.h"
 #include "fen.h"
 
-Piece make_move(Board* board, Move move) {
+Piece apply_move(Board* board, Move move) {
   Piece piece = board->grid[move.from_rank][move.from_file];
   Piece piece_taken = board->grid[move.to_rank][move.to_file];
   board->grid[move.to_rank][move.to_file] = piece;
@@ -42,64 +42,7 @@ Piece make_move(Board* board, Move move) {
   return piece_taken;
 }
 
-// Use make_move() then update game metadata
-void commit_move(Board* board, Move move) {
-  Piece piece = board->grid[move.from_rank][move.from_file];
-  bool halfmove_reset =
-      board->grid[move.to_rank][move.to_file] != EMPTY || abs(piece) == W_PAWN;
-
-  Piece piece_taken = make_move(board, move);
-
-  // Update castling rights game metadata
-  bool is_castle =
-      (abs(piece) == W_KING) && (abs(move.from_file - move.to_file) == 2);
-
-  if (is_castle) {
-    if (board->turn == TURN_WHITE) {
-      board->castle_wk = 0;
-      board->castle_wq = 0;
-    } else {
-      board->castle_bk = 0;
-      board->castle_bq = 0;
-    }
-  } else {
-    if (piece == W_ROOK && move.from_rank == 0) {
-      if (move.from_file == 0)
-        board->castle_wq = 0;
-      else if (move.from_file == 7)
-        board->castle_wk = 0;
-    } else if (piece == B_ROOK && move.from_rank == 7) {
-      if (move.from_file == 0) board->castle_bq = 0;
-      if (move.from_file == 7) board->castle_bk = 0;
-    } else if (piece == W_KING) {
-      board->castle_wk = 0;
-      board->castle_wq = 0;
-    } else if (piece == B_KING) {
-      board->castle_bk = 0;
-      board->castle_bq = 0;
-    }
-  }
-
-  // Update en passant metadata
-  bool is_double_push =
-      abs(piece) == W_PAWN && abs(move.from_rank - move.to_rank) == 2;
-
-  board->ep_rank =
-      is_double_push ? move.from_rank + turn_sign(board->turn) : -1;
-  board->ep_file = is_double_push ? move.from_file : -1;
-
-  // Update move clock metadata
-  if (halfmove_reset)
-    board->halfmove_clock = 0;
-  else
-    board->halfmove_clock++;
-
-  if (board->turn == TURN_BLACK) board->fullmove_count++;
-
-  flip_turn(&board->turn);
-}
-
-void reverse_move(Board* board, Move move, Piece piece_taken) {
+void revert_move(Board* board, Move move, Piece piece_taken) {
   Piece piece = board->grid[move.to_rank][move.to_file];
   board->grid[move.from_rank][move.from_file] = piece;
   board->grid[move.to_rank][move.to_file] = piece_taken;
@@ -132,6 +75,82 @@ void reverse_move(Board* board, Move move, Piece piece_taken) {
         (Piece)(-turn_sign(board->turn));
     board->grid[move.to_rank][move.to_file] = piece_taken;
   }
+}
+
+void make_move(Board* board, Move move, Undo* undo) {
+  undo->castle_wk = board->castle_wk;
+  undo->castle_wq = board->castle_wq;
+  undo->castle_bk = board->castle_bk;
+  undo->castle_bq = board->castle_bq;
+  undo->ep_rank = board->ep_rank;
+  undo->ep_file = board->ep_file;
+  undo->halfmove_clock = board->halfmove_clock;
+  undo->fullmove_count = board->fullmove_count;
+
+  Piece piece = board->grid[move.from_rank][move.from_file];
+  bool halfmove_reset =
+      board->grid[move.to_rank][move.to_file] != EMPTY || abs(piece) == W_PAWN;
+
+  undo->piece_taken = apply_move(board, move);
+
+  bool is_castle =
+      (abs(piece) == W_KING) && (abs(move.from_file - move.to_file) == 2);
+
+  if (is_castle) {
+    if (board->turn == TURN_WHITE) {
+      board->castle_wk = 0;
+      board->castle_wq = 0;
+    } else {
+      board->castle_bk = 0;
+      board->castle_bq = 0;
+    }
+  } else {
+    if (piece == W_ROOK && move.from_rank == 0) {
+      if (move.from_file == 0)
+        board->castle_wq = 0;
+      else if (move.from_file == 7)
+        board->castle_wk = 0;
+    } else if (piece == B_ROOK && move.from_rank == 7) {
+      if (move.from_file == 0) board->castle_bq = 0;
+      if (move.from_file == 7) board->castle_bk = 0;
+    } else if (piece == W_KING) {
+      board->castle_wk = 0;
+      board->castle_wq = 0;
+    } else if (piece == B_KING) {
+      board->castle_bk = 0;
+      board->castle_bq = 0;
+    }
+  }
+
+  bool is_double_push =
+      abs(piece) == W_PAWN && abs(move.from_rank - move.to_rank) == 2;
+
+  board->ep_rank =
+      is_double_push ? move.from_rank + turn_sign(board->turn) : -1;
+  board->ep_file = is_double_push ? move.from_file : -1;
+
+  if (halfmove_reset)
+    board->halfmove_clock = 0;
+  else
+    board->halfmove_clock++;
+
+  if (board->turn == TURN_BLACK) board->fullmove_count++;
+
+  flip_turn(&board->turn);
+}
+
+void unmake_move(Board* board, Move move, const Undo* undo) {
+  flip_turn(&board->turn);
+  board->castle_wk = undo->castle_wk;
+  board->castle_wq = undo->castle_wq;
+  board->castle_bk = undo->castle_bk;
+  board->castle_bq = undo->castle_bq;
+  board->ep_rank = undo->ep_rank;
+  board->ep_file = undo->ep_file;
+  board->halfmove_clock = undo->halfmove_clock;
+  board->fullmove_count = undo->fullmove_count;
+
+  revert_move(board, move, undo->piece_taken);
 }
 
 Move move_from_lan(const char* lan) {

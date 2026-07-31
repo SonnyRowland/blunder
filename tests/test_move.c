@@ -8,6 +8,8 @@
 void setUp(void) {}
 void tearDown(void) {}
 
+static Undo undo;
+
 // Helper function for checking two Move structs are equal
 static bool moves_equal(Move move1, Move move2){
   if (move1.from_rank != move2.from_rank) return 0;
@@ -23,7 +25,7 @@ void test_make_move_en_passant_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {4, 4, 5, 3};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[4][3] == EMPTY);
 }
@@ -33,7 +35,7 @@ void test_make_move_en_passant_black(void) {
   Board board = fen_to_board(fen);
   Move move = (Move){3, 4, 2, 3};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[3][3] == EMPTY);
 }
@@ -43,7 +45,7 @@ void test_make_move_castle_k_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {0, 4, 0, 6};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[0][5] == W_ROOK);
   TEST_ASSERT_TRUE(board.grid[0][6] == W_KING);
@@ -54,7 +56,7 @@ void test_make_move_castle_k_black(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {7, 4, 7, 6};
 
-  make_move(&board, move);
+  apply_move(&board, move);
   
   TEST_ASSERT_TRUE(board.grid[7][5] == B_ROOK);
   TEST_ASSERT_TRUE(board.grid[7][6] == B_KING);
@@ -65,7 +67,7 @@ void test_make_move_castle_q_white(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {0, 4, 0, 2};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[0][2] == W_KING);
   TEST_ASSERT_TRUE(board.grid[0][3] == W_ROOK);
@@ -76,7 +78,7 @@ void test_make_move_castle_q_black(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {7, 4, 7, 2};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[7][2] == B_KING);
   TEST_ASSERT_TRUE(board.grid[7][3] == B_ROOK);
@@ -87,7 +89,7 @@ void test_make_move_promotion_knight_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {7, 4, 7, 4, 2};
   
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[7][4] == W_KNIGHT);
 }
@@ -97,7 +99,7 @@ void test_make_move_promotion_knight_black(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {0, 1, 0, 1, -2};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[0][1] == B_KNIGHT);
 }
@@ -107,7 +109,7 @@ void test_make_move_promotion_bishop_white(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {7, 3, 7, 3, 3};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[7][3] == W_BISHOP);
 }
@@ -117,7 +119,7 @@ void test_make_move_promotion_bishop_black(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {0, 7, 0, 7, -3};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[0][7] == B_BISHOP);
 }
@@ -127,7 +129,7 @@ void test_make_move_promotion_rook_white(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {7, 5, 7, 5, 4};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[7][5] == W_ROOK);
 }
@@ -137,7 +139,7 @@ void test_make_move_promotion_rook_black(void){
   Board board = fen_to_board(fen);
   Move move = (Move){0, 4, 0, 4, -4};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[0][4] == B_ROOK);
 }
@@ -147,7 +149,7 @@ void test_make_move_promotion_queen_white(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {7, 7, 7, 7, 5};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[7][7] == W_QUEEN);
 }
@@ -157,7 +159,7 @@ void test_make_move_promotion_queen_black(void){
   Board board = fen_to_board(fen);
   Move move = (Move){0, 0, 0, 0, -5};
 
-  make_move(&board, move);
+  apply_move(&board, move);
 
   TEST_ASSERT_TRUE(board.grid[0][0] == B_QUEEN);
 }
@@ -167,7 +169,7 @@ void test_commit_move_castle_wk(void){
   Board board = fen_to_board(fen);
   Move move = (Move){0, 4, 0, 6, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 0);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 0);
@@ -181,7 +183,7 @@ void test_commit_move_castle_bk(void){
 
   Move move = (Move){7, 4, 7, 6, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 1);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 1);
@@ -195,7 +197,7 @@ void test_commit_move_castle_wq(void){
 
   Move move = (Move){0, 4, 0, 2, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 0);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 0);
@@ -209,7 +211,7 @@ void test_commit_move_castle_bq(void){
 
   Move move = (Move){7, 4, 7, 2, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 1);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 1);
@@ -223,7 +225,7 @@ void test_commit_move_castling_rights_rook_k_white(void){
 
   Move move = (Move){0, 7, 1, 7, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 0);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 1);
@@ -237,7 +239,7 @@ void test_commit_move_castling_rights_rook_k_black(void){
 
   Move move = (Move){7, 7, 6, 7, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 1);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 1);
@@ -251,7 +253,7 @@ void test_commit_move_castling_rights_rook_q_white(void){
 
   Move move = (Move){0, 0, 1, 0, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 1);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 0);
@@ -265,7 +267,7 @@ void test_commit_move_castling_rights_rook_q_black(void){
 
   Move move = (Move){7, 0, 6, 0, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 1);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 1);
@@ -279,7 +281,7 @@ void test_commit_move_castling_rights_king_white(void){
 
   Move move = (Move){0, 4, 0, 5, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_wk, 0);
   TEST_ASSERT_EQUAL_INT(board.castle_wq, 0);
@@ -291,7 +293,7 @@ void test_commit_move_castling_rights_king_black(void){
 
   Move move = (Move){7, 4, 6, 4, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.castle_bk, 0);
   TEST_ASSERT_EQUAL_INT(board.castle_bq, 0);
@@ -302,7 +304,7 @@ void test_commit_move_ep_white(void){
 
   Move move = (Move){1, 4, 3, 4, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.ep_file, 4);
   TEST_ASSERT_EQUAL_INT(board.ep_rank, 2);
@@ -314,7 +316,7 @@ void test_commit_move_ep_black(void){
 
   Move move = (Move){6, 3, 4, 3, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.ep_file, 3);
   TEST_ASSERT_EQUAL_INT(board.ep_rank, 5);
@@ -326,7 +328,7 @@ void test_commit_move_ep_clear_white(void){
 
   Move move = (Move){3, 3, 4, 4, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.ep_file, -1);
   TEST_ASSERT_EQUAL_INT(board.ep_rank, -1);
@@ -338,7 +340,7 @@ void test_commit_move_ep_clear_black(void){
 
   Move move = (Move){7, 1, 5, 2, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.ep_file, -1);
   TEST_ASSERT_EQUAL_INT(board.ep_rank, -1);
@@ -349,7 +351,7 @@ void test_commit_move_halfmove_increment(void){
 
   Move move = (Move){0, 1, 2, 2, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.halfmove_clock, 1);
 }
@@ -360,7 +362,7 @@ void test_commit_move_halfmove_reset_capture_white(void){
 
   Move move = (Move){4, 1, 5, 2, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.halfmove_clock, 0);
 }
@@ -371,7 +373,7 @@ void test_commit_move_halfmove_reset_capture_black(void){
 
   Move move = (Move){7, 3, 4, 6, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.halfmove_clock, 0);
 }
@@ -382,7 +384,7 @@ void test_commit_move_halfmove_reset_pawn_white(void){
 
   Move move = (Move){1, 3, 3, 3, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.halfmove_clock, 0);
 }
@@ -393,7 +395,7 @@ void test_commit_move_halfmove_reset_pawn_black(void){
 
   Move move = (Move){6, 3, 5, 3, 0};
 
-  commit_move(&board, move);
+  make_move(&board, move, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.halfmove_clock, 0);
 }
@@ -404,8 +406,8 @@ void test_commit_move_fullmove_increment(void){
   Move move1 = (Move){1, 4, 3, 4, 0};
   Move move2 = (Move){6, 4, 4, 4, 0};
 
-  commit_move(&board, move1);
-  commit_move(&board, move2);
+  make_move(&board, move1, &undo);
+  make_move(&board, move2, &undo);
 
   TEST_ASSERT_EQUAL_INT(board.fullmove_count, 2);
 }
@@ -416,8 +418,8 @@ void test_reverse_move_en_passant_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {4, 3, 5, 4};
   
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -429,8 +431,8 @@ void test_reverse_move_en_passant_black(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {3, 1, 2, 2};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -442,8 +444,8 @@ void test_reverse_move_castle_k_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {0, 4, 0, 6};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -455,8 +457,8 @@ void test_reverse_move_castle_k_black(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {7, 4, 7, 6};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -468,8 +470,8 @@ void test_reverse_move_castle_q_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {0, 4, 0, 2};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -481,8 +483,8 @@ void test_reverse_move_castle_q_black(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {7, 4, 7, 2};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -494,8 +496,8 @@ void test_reverse_move_promotion_knight_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {6, 4, 7, 4, 2};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -509,8 +511,8 @@ void test_reverse_move_promotion_knight_black(void){
   Board board = fen_to_board(fen);
   Move move = (Move) {1, 7, 0, 7, -2};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -524,8 +526,8 @@ void test_reverse_move_promotion_bishop_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {6, 1, 7, 1, 3};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -539,8 +541,8 @@ void test_reverse_move_promotion_bishop_black(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {1, 1, 0, 1, -3};
   
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -554,8 +556,8 @@ void test_reverse_move_promotion_rook_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {6, 5, 7, 5, 4};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -569,8 +571,8 @@ void test_reverse_move_promotion_rook_black(void) {
   Board board = fen_to_board(fen);
   Move move = (Move) {1, 3, 0, 3, -4};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -584,8 +586,8 @@ void test_reverse_move_promotion_queen_white(void) {
   Board board = fen_to_board(fen);
   Move move = (Move){6, 7, 7, 7, 5};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);
@@ -599,8 +601,8 @@ void test_reverse_move_promotion_queen_black(void) {
   Board board = fen_to_board(fen);
   Move move = (Move){1, 0, 0, 0, -5};
 
-  Piece piece_taken = make_move(&board, move);
-  reverse_move(&board, move, piece_taken);
+  Piece piece_taken = apply_move(&board, move);
+  revert_move(&board, move, piece_taken);
   board_to_fen(board, fen2);
 
   TEST_ASSERT_EQUAL_STRING(fen, fen2);

@@ -1,5 +1,6 @@
 #include <limits.h>
 
+#include "display.h"
 #include "eval.h"
 #include "move.h"
 #include "movegen.h"
@@ -13,30 +14,31 @@ Move get_best_move(Board* board, int depth) {
   int best_idx;
   int alpha = INT_MIN;
   int beta = INT_MAX;
+  Undo undo;
 
   if (board->turn == TURN_WHITE) {
     best = INT_MIN;
     for (int i = 0; i < move_list.count; i++) {
-      Piece piece_taken = make_move(board, move_list.moves[i]);
+      make_move(board, move_list.moves[i], &undo);
       int val = alphabeta(board, depth - 1, alpha, beta);
       if (val > best) {
         best = val;
         best_idx = i;
       }
-      reverse_move(board, move_list.moves[i], piece_taken);
+      unmake_move(board, move_list.moves[i], &undo);
       if (val >= beta) break;
       alpha = alpha > val ? alpha : val;
     }
   } else {
     best = INT_MAX;
     for (int i = 0; i < move_list.count; i++) {
-      Piece piece_taken = make_move(board, move_list.moves[i]);
+      make_move(board, move_list.moves[i], &undo);
       int val = alphabeta(board, depth - 1, alpha, beta);
       if (val < best) {
         best = val;
         best_idx = i;
       }
-      reverse_move(board, move_list.moves[i], piece_taken);
+      unmake_move(board, move_list.moves[i], &undo);
       if (val <= alpha) break;
       beta = beta < val ? beta : val;
     }
@@ -49,13 +51,14 @@ static int alphabeta(Board* board, int depth, int alpha, int beta) {
   if (depth == 0) return eval_material(board);
 
   MoveList move_list = generate_legal_moves(*board);
+  Undo undo;
 
   if (board->turn == TURN_WHITE) {
     int best = INT_MIN;
     for (int i = 0; i < move_list.count; i++) {
-      Piece piece_taken = make_move(board, move_list.moves[i]);
+      make_move(board, move_list.moves[i], &undo);
       int val = alphabeta(board, depth - 1, alpha, beta);
-      reverse_move(board, move_list.moves[i], piece_taken);
+      unmake_move(board, move_list.moves[i], &undo);
       if (val > best) best = val;
       if (val >= beta) break;
       alpha = alpha > val ? alpha : val;
@@ -64,9 +67,9 @@ static int alphabeta(Board* board, int depth, int alpha, int beta) {
   } else {
     int best = INT_MAX;
     for (int i = 0; i < move_list.count; i++) {
-      Piece piece_taken = make_move(board, move_list.moves[i]);
+      make_move(board, move_list.moves[i], &undo);
       int val = alphabeta(board, depth - 1, alpha, beta);
-      reverse_move(board, move_list.moves[i], piece_taken);
+      unmake_move(board, move_list.moves[i], &undo);
       if (val < best) best = val;
       if (val <= alpha) break;
       beta = beta < val ? beta : val;
