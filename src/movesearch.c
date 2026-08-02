@@ -1,17 +1,30 @@
 #include <limits.h>
+#include <stdio.h>
 
 #include "display.h"
 #include "eval.h"
 #include "move.h"
 #include "movegen.h"
+#include "timemanager.h"
 
 static int alphabeta(Board* board, int depth, int alpha, int beta);
+static void get_best_move(Board* board, Move* bestmove, int depth);
 
-Move get_best_move(Board* board, int depth) {
+void iddfs(Board* board, Move* bestmove) {
+  int depthlimit = 1;
+
+  Move candidate;
+
+  while (!stop_search) {
+    get_best_move(board, &candidate, depthlimit);
+    if (!stop_search) *bestmove = candidate;
+    depthlimit++;
+  }
+}
+
+static void get_best_move(Board* board, Move* bestmove, int depth) {
   MoveList move_list = generate_legal_moves(*board);
-  if (!move_list.count) return (Move){0};
   int best;
-  int best_idx;
   int alpha = INT_MIN;
   int beta = INT_MAX;
   Undo undo;
@@ -23,7 +36,7 @@ Move get_best_move(Board* board, int depth) {
       int val = alphabeta(board, depth - 1, alpha, beta);
       if (val > best) {
         best = val;
-        best_idx = i;
+        *bestmove = move_list.moves[i];
       }
       unmake_move(board, move_list.moves[i], &undo);
       if (val >= beta) break;
@@ -36,19 +49,17 @@ Move get_best_move(Board* board, int depth) {
       int val = alphabeta(board, depth - 1, alpha, beta);
       if (val < best) {
         best = val;
-        best_idx = i;
+        *bestmove = move_list.moves[i];
       }
       unmake_move(board, move_list.moves[i], &undo);
       if (val <= alpha) break;
       beta = beta < val ? beta : val;
     }
   }
-
-  return move_list.moves[best_idx];
 }
 
 static int alphabeta(Board* board, int depth, int alpha, int beta) {
-  if (depth == 0) return eval_material(board);
+  if (depth == 0 || stop_search) return eval_material(board);
 
   MoveList move_list = generate_legal_moves(*board);
   Undo undo;

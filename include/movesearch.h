@@ -4,6 +4,6 @@
 #include "board.h"
 #include "move.h"
 
-Move get_best_move(Board* board, int depth);
+void iddfs(Board* board, Move* bestmove);
 
 #endif

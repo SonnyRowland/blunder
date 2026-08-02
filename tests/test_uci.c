@@ -3,6 +3,7 @@
 
 #include "board.h"
 #include "display.h"
+#include "move.h"
 #include "uci.h"
 #include "unity.h"
 
@@ -34,7 +35,7 @@ void test_dispatch_uci(void){
   char* buf = "uci\n";
   FILE *out = fmemopen(res, sizeof(res), "w");
 
-  dispatch(buf, out, &(Board){0});
+  dispatch(buf, out, &(Board){0}, &(Move){0});
 
   fclose(out);
 
@@ -48,7 +49,7 @@ void test_dispatch_isready(void){
   char* buf = "isready\n";
   FILE *out = fmemopen(res, sizeof(res), "w");
 
-  dispatch(buf, out, &(Board){0});
+  dispatch(buf, out, &(Board){0}, &(Move){0});
 
   fclose(out);
 
@@ -59,7 +60,7 @@ void test_position_startpos(void){
   char buf[] = "position startpos\n";
   Board board = {0};
 
-  dispatch(buf, stdout, &board);
+  dispatch(buf, stdout, &board, &(Move){0});
 
   Board expected_board = get_start_pos();
   TEST_ASSERT_TRUE(boards_equal(expected_board, board));
@@ -69,7 +70,7 @@ void test_position_startpos_qgd(void){
   char buf[] = "position startpos moves d2d4 d7d5 c2c4 e7e6\n";
   Board board = {0};
 
-  dispatch(buf, stdout, &board);
+  dispatch(buf, stdout, &board, &(Move){0});
 
   TEST_ASSERT_EQUAL_INT(board.grid[3][3], W_PAWN);
   TEST_ASSERT_EQUAL_INT(board.grid[4][3], B_PAWN);
@@ -81,7 +82,7 @@ void test_position_startpos_en_passant(void){
   char buf[] = "position startpos moves a2a3 d7d5 a3a4 d5d4 e2e4 d4e3\n";
   Board board = {0};
 
-  dispatch(buf, stdout, &board);
+  dispatch(buf, stdout, &board, &(Move){0});
 
   TEST_ASSERT_EQUAL_INT(board.grid[2][4], B_PAWN);
   TEST_ASSERT_EQUAL_INT(board.grid[3][4], EMPTY);
@@ -92,7 +93,7 @@ void test_position_fen_two_knights(void){
   char buf[] = "position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 moves e2e4 e7e5 g1f3 b8c6\n";
   Board board = {0};
 
-  dispatch(buf, stdout, &board);
+  dispatch(buf, stdout, &board, &(Move){0});
 
   TEST_ASSERT_EQUAL_INT(board.grid[3][4], W_PAWN);
   TEST_ASSERT_EQUAL_INT(board.grid[4][4], B_PAWN);
@@ -104,7 +105,7 @@ void test_position_fen_en_passant(void){
   char buf[] = "position fen r1bqkbnr/pp3ppp/3p4/2pPp3/3nP3/2N2N2/PPP2PPP/R1BQKB1R w KQkq c6 0 6 moves d5c6\n";
   Board board = {0};
 
-  dispatch(buf, stdout, &board);
+  dispatch(buf, stdout, &board, &(Move){0});
 
   TEST_ASSERT_EQUAL_INT(board.grid[5][2], W_PAWN);
   TEST_ASSERT_EQUAL_INT(board.grid[4][2], EMPTY);

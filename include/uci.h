@@ -2,4 +2,4 @@
 
 #include <stdio.h>
 
-void dispatch(char* buf, FILE* out, Board* board);
+void dispatch(char* buf, FILE* out, Board* board, Move* bestmove);
