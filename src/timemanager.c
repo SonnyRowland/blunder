@@ -16,13 +16,36 @@ void timer(uint32_t time_ms);
 
 typedef struct {
   Board* board;
+} DebugArgs;
+
+void* debug_thread(void* args) {
+  DebugArgs* dargs = (DebugArgs*)args;
+
+  while (!stop_search) {
+    print_grid(*dargs->board);
+    timer(1000);
+  }
+
+  free(dargs);
+  return NULL;
+}
+
+typedef struct {
+  Board* board;
+  Move* bestmove;
+  FILE* out;
 } SearchArgs;
 
 void* search_thread(void* args) {
   SearchArgs* sargs = (SearchArgs*)args;
-  int depth = 7;
 
-  get_best_move(sargs->board, depth);
+  iddfs(sargs->board, sargs->bestmove);
+  fprintf(sargs->out, "bestmove");
+  fprintf(sargs->out, "{%i, %i, %i, %i}\n", sargs->bestmove->from_rank,
+          sargs->bestmove->from_file, sargs->bestmove->to_rank,
+          sargs->bestmove->to_file);
+  fflush(sargs->out);
+  free(sargs);
   return NULL;
 }
 
@@ -42,26 +65,35 @@ void timer(uint32_t time_ms) {
   nanosleep(&tp, NULL);
 }
 
-void timemanager_go(Board* board, char* args) {
-  *board = get_start_pos();
-
+void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
   stop_search = 0;
   char* token = strtok(args, " \n");
-  pthread_t search_tid, timer_tid;
-
-  SearchArgs* sargs = malloc(sizeof(SearchArgs));
-  sargs->board = board;
+  pthread_t search_tid, timer_tid, debug_tid;
 
   if (token && strcmp(token, "movetime") == 0) {
     token = strtok(NULL, " \n");
     if (!token) return;
+
+    SearchArgs* sargs = malloc(sizeof(SearchArgs));
+    sargs->board = board;
+    sargs->bestmove = bestmove;
+    sargs->out = out;
 
     uint32_t time_ms = (uint32_t)strtoul(token, NULL, 10);
 
     pthread_create(&search_tid, NULL, search_thread, sargs);
     pthread_create(&timer_tid, NULL, timer_thread, (void*)(uintptr_t)time_ms);
 
-  } else if (strcmp(token, "infinite") == 0) {
+  } else if (token && strcmp(token, "infinite") == 0) {
+    SearchArgs* sargs = malloc(sizeof(SearchArgs));
+    sargs->board = board;
+    sargs->bestmove = bestmove;
+    sargs->out = out;
+
+    DebugArgs* dargs = malloc(sizeof(DebugArgs));
+    dargs->board = board;
+
     pthread_create(&search_tid, NULL, search_thread, sargs);
+    pthread_create(&debug_tid, NULL, debug_thread, dargs);
   }
 }
