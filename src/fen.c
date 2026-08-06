@@ -15,7 +15,7 @@ const Piece fen_to_piece[128] = {
 };
 
 // Offset by 6 for non negative array indexing
-static const char piece_to_fen[13] = {
+const char piece_to_fen[13] = {
     [B_KING + 6] = 'k',   [B_QUEEN + 6] = 'q',  [B_ROOK + 6] = 'r',
     [B_BISHOP + 6] = 'b', [B_KNIGHT + 6] = 'n', [B_PAWN + 6] = 'p',
     [EMPTY + 6] = '.',    [W_PAWN + 6] = 'P',   [W_KNIGHT + 6] = 'N',

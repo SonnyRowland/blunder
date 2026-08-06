@@ -1051,7 +1051,7 @@ void test_check_queen_rank_increase_file_increase_black(void) {
   TEST_ASSERT_TRUE(is_in_check(board));
 }
 
-void test_lan_opening_move_white(void){
+void test_move_from_lan_opening_move_white(void){
   const char* lan = "e2e4";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){1, 4, 3, 4, 0};
@@ -1059,7 +1059,7 @@ void test_lan_opening_move_white(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_opening_move_black(void){
+void test_move_from_lan_opening_move_black(void){
   const char* lan = "d7d5";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){6, 3, 4, 3, 0};
@@ -1067,7 +1067,7 @@ void test_lan_opening_move_black(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_promotion_knight_white(void){
+void test_move_from_lan_promotion_knight_white(void){
   const char* lan = "a7a8n";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){6, 0, 7, 0, 2};
@@ -1075,7 +1075,7 @@ void test_lan_promotion_knight_white(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_promotion_knight_black(void){
+void test_move_from_lan_promotion_knight_black(void){
   const char* lan = "c2c1n";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){1, 2, 0, 2, -2};
@@ -1083,7 +1083,7 @@ void test_lan_promotion_knight_black(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_promotion_bishop_white(void){
+void test_move_from_lan_promotion_bishop_white(void){
   const char* lan = "g7g8b";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){6, 6, 7, 6, 3};
@@ -1091,7 +1091,7 @@ void test_lan_promotion_bishop_white(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_promotion_bishop_black(void){
+void test_move_from_lan_promotion_bishop_black(void){
   const char* lan = "f2f1b";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){1, 5, 0, 5, -3};
@@ -1099,7 +1099,7 @@ void test_lan_promotion_bishop_black(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_promotion_rook_white(void){
+void test_move_from_lan_promotion_rook_white(void){
   const char* lan = "b7b8r";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){6, 1, 7, 1, 4};
@@ -1107,7 +1107,7 @@ void test_lan_promotion_rook_white(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_promotion_rook_black(void){
+void test_move_from_lan_promotion_rook_black(void){
   const char* lan = "e2e1r";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){1, 4, 0, 4, -4};
@@ -1115,7 +1115,7 @@ void test_lan_promotion_rook_black(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_promotion_queen_white(void){
+void test_move_from_lan_promotion_queen_white(void){
   const char* lan = "d7d8q";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){6, 3, 7, 3, 5};
@@ -1123,12 +1123,93 @@ void test_lan_promotion_queen_white(void){
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
 }
 
-void test_lan_promotion_queen_black(void){
+void test_move_from_lan_promotion_queen_black(void){
   const char* lan = "h2h1q";
   Move returned_move = move_from_lan(lan);
   Move expected_move = (Move){1, 7, 0, 7, -5};
 
   TEST_ASSERT_TRUE(moves_equal(expected_move, returned_move));
+}
+
+void test_lan_from_move_opening_move_white(void){
+  Move move = (Move){1, 4, 3, 4, 0};
+  char lan[6];
+
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("e2e4", lan);
+}
+
+void test_lan_from_move_opening_move_black(void){
+  Move move = (Move){6, 3, 4, 3, 0};
+  char lan[6];
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("d7d5", lan);
+}
+
+void test_lan_from_move_promotion_knight_white(void){
+  Move move = (Move){6, 0, 7, 0, 2};
+  char lan[6];
+  lan_from_move(move, lan);
+  
+  TEST_ASSERT_EQUAL_STRING("a7a8n", lan);
+}
+
+void test_lan_from_move_promotion_knight_black(void){
+  Move move = (Move){1, 2, 0, 2, -2};
+  char lan[6];
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("c2c1n", lan);
+}
+
+void test_lan_from_move_promotion_bishop_white(void){
+  Move move = (Move){6, 6, 7, 6, 3};
+  char lan[6];
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("g7g8b", lan);
+}
+
+void test_lan_from_move_promotion_bishop_black(void){
+  Move move = (Move){1, 5, 0, 5, -3};
+  char lan[6];
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("f2f1b", lan);
+}
+
+void test_lan_from_move_promotion_rook_white(void){
+  Move move = (Move){6, 1, 7, 1, 4};
+  char lan[6];
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("b7b8r", lan);
+}
+
+void test_lan_from_move_promotion_rook_black(void){
+  Move move = (Move){1, 4, 0, 4, -4};
+  char lan[6];
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("e2e1r", lan);
+}
+
+void test_lan_from_move_promotion_queen_white(void){
+  Move move = (Move){6, 3, 7, 3, 5};
+  char lan[6];
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("d7d8q", lan);
+}
+
+void test_lan_from_move_promotion_queen_black(void){
+  Move move = (Move){1, 7, 0, 7, -5};
+  char lan[6];
+  lan_from_move(move, lan);
+
+  TEST_ASSERT_EQUAL_STRING("h2h1q", lan);
 }
 
 int main(void) {
@@ -1249,16 +1330,27 @@ int main(void) {
   RUN_TEST(test_check_queen_rank_increase_file_increase_white);
   RUN_TEST(test_check_queen_rank_increase_file_increase_black);
 
-  RUN_TEST(test_lan_opening_move_white);
-  RUN_TEST(test_lan_opening_move_black);
-  RUN_TEST(test_lan_promotion_knight_white);
-  RUN_TEST(test_lan_promotion_knight_black);
-  RUN_TEST(test_lan_promotion_bishop_white);
-  RUN_TEST(test_lan_promotion_bishop_black);
-  RUN_TEST(test_lan_promotion_rook_white);
-  RUN_TEST(test_lan_promotion_rook_black);
-  RUN_TEST(test_lan_promotion_queen_white);
-  RUN_TEST(test_lan_promotion_queen_black);
+  RUN_TEST(test_move_from_lan_opening_move_white);
+  RUN_TEST(test_move_from_lan_opening_move_black);
+  RUN_TEST(test_move_from_lan_promotion_knight_white);
+  RUN_TEST(test_move_from_lan_promotion_knight_black);
+  RUN_TEST(test_move_from_lan_promotion_bishop_white);
+  RUN_TEST(test_move_from_lan_promotion_bishop_black);
+  RUN_TEST(test_move_from_lan_promotion_rook_white);
+  RUN_TEST(test_move_from_lan_promotion_rook_black);
+  RUN_TEST(test_move_from_lan_promotion_queen_white);
+  RUN_TEST(test_move_from_lan_promotion_queen_black);
+
+  RUN_TEST(test_lan_from_move_opening_move_white);
+  RUN_TEST(test_lan_from_move_opening_move_black);
+  RUN_TEST(test_lan_from_move_promotion_knight_white);
+  RUN_TEST(test_lan_from_move_promotion_knight_black);
+  RUN_TEST(test_lan_from_move_promotion_bishop_white);
+  RUN_TEST(test_lan_from_move_promotion_bishop_black);
+  RUN_TEST(test_lan_from_move_promotion_rook_white);
+  RUN_TEST(test_lan_from_move_promotion_rook_black);
+  RUN_TEST(test_lan_from_move_promotion_queen_white);
+  RUN_TEST(test_lan_from_move_promotion_queen_black);
 
   return UNITY_END();
 }

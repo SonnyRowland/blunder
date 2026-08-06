@@ -28,6 +28,8 @@ Piece apply_move(Board* board, Move move);
 void revert_move(Board* board, Move move, Piece piece_taken);
 void make_move(Board* board, Move move, Undo* undo);
 void unmake_move(Board* board, Move move, const Undo* undo);
+
 Move move_from_lan(const char* lan);
+void lan_from_move(Move move, char* lan);
 
 #endif
