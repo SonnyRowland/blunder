@@ -1,5 +1,6 @@
 #include "move.h"
 
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -169,4 +170,13 @@ Move move_from_lan(const char* lan) {
   }
 
   return move;
+}
+
+void lan_from_move(Move move, char* lan) {
+  lan[0] = (char)('a' + move.from_file);
+  lan[1] = (char)('1' + move.from_rank);
+  lan[2] = (char)('a' + move.to_file);
+  lan[3] = (char)('1' + move.to_rank);
+  lan[4] = move.promotion ? tolower(piece_to_fen[move.promotion + 6]) : '\0';
+  lan[5] = '\0';
 }

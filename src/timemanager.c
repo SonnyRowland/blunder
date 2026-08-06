@@ -40,12 +40,15 @@ void* search_thread(void* args) {
   SearchArgs* sargs = (SearchArgs*)args;
 
   iddfs(sargs->board, sargs->bestmove);
-  fprintf(sargs->out, "bestmove");
-  fprintf(sargs->out, "{%i, %i, %i, %i}\n", sargs->bestmove->from_rank,
-          sargs->bestmove->from_file, sargs->bestmove->to_rank,
-          sargs->bestmove->to_file);
+
+  char lan[6];
+  lan_from_move(*sargs->bestmove, lan);
+
+  fprintf(sargs->out, "bestmove %s\n", lan);
+
   fflush(sargs->out);
   free(sargs);
+
   return NULL;
 }
 
