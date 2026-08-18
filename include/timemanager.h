@@ -8,5 +8,7 @@
 
 extern volatile _Atomic int stop_search;
 void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out);
+void timemanager_stop(void);
+void timemanager_wait(void);
 
 #endif

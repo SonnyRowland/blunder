@@ -51,7 +51,6 @@ void dispatch(char* buf, FILE* out, Board* board, Move* bestmove) {
 }
 
 static void handle_uci(char* args, FILE* out, Board* board, Move* bestmove) {
-  // Silence warnings
   (void)args;
   (void)board;
   (void)bestmove;
@@ -63,7 +62,6 @@ static void handle_uci(char* args, FILE* out, Board* board, Move* bestmove) {
 
 static void handle_isready(char* args, FILE* out, Board* board,
                            Move* bestmove) {
-  // Silence warnings
   (void)args;
   (void)board;
   (void)bestmove;
@@ -73,7 +71,6 @@ static void handle_isready(char* args, FILE* out, Board* board,
 
 static void handle_position(char* args, FILE* out, Board* board,
                             Move* bestmove) {
-  // Silence warnings
   (void)bestmove;
 
   if (args) {
@@ -127,5 +124,5 @@ static void handle_stop(char* args, FILE* out, Board* board, Move* bestmove) {
   (void)board;
   (void)bestmove;
 
-  stop_search = 1;
+  timemanager_stop();
 }

@@ -1,34 +1,21 @@
 #include "timemanager.h"
 
 #include <pthread.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-#include "display.h"
 #include "movesearch.h"
 
 volatile _Atomic int stop_search = 0;
+static pthread_mutex_t search_mtx = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t search_done = PTHREAD_COND_INITIALIZER;
+static bool search_running = false;
 
 void timer(uint32_t time_ms);
-
-typedef struct {
-  Board* board;
-} DebugArgs;
-
-void* debug_thread(void* args) {
-  DebugArgs* dargs = (DebugArgs*)args;
-
-  while (!stop_search) {
-    print_grid(*dargs->board);
-    timer(1000);
-  }
-
-  free(dargs);
-  return NULL;
-}
 
 typedef struct {
   Board* board;
@@ -49,13 +36,18 @@ void* search_thread(void* args) {
   fflush(sargs->out);
   free(sargs);
 
+  pthread_mutex_lock(&search_mtx);
+  search_running = false;
+  pthread_cond_broadcast(&search_done);
+  pthread_mutex_unlock(&search_mtx);
+
   return NULL;
 }
 
 void* timer_thread(void* args) {
   uint32_t time_ms = (uint32_t)(uintptr_t)args;
   timer(time_ms);
-  stop_search = 1;
+  timemanager_stop();
   return NULL;
 }
 
@@ -69,9 +61,10 @@ void timer(uint32_t time_ms) {
 }
 
 void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
-  stop_search = 0;
+  stop_search = 1;
   char* token = strtok(args, " \n");
-  pthread_t search_tid, timer_tid, debug_tid;
+
+  pthread_t tid;
 
   if (token && strcmp(token, "movetime") == 0) {
     token = strtok(NULL, " \n");
@@ -84,8 +77,15 @@ void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
 
     uint32_t time_ms = (uint32_t)strtoul(token, NULL, 10);
 
-    pthread_create(&search_tid, NULL, search_thread, sargs);
-    pthread_create(&timer_tid, NULL, timer_thread, (void*)(uintptr_t)time_ms);
+    pthread_mutex_lock(&search_mtx);
+    while (search_running) pthread_cond_wait(&search_done, &search_mtx);
+    stop_search = 0;
+    search_running = true;
+    pthread_mutex_unlock(&search_mtx);
+    pthread_create(&tid, NULL, search_thread, sargs);
+    pthread_detach(tid);
+    pthread_create(&tid, NULL, timer_thread, (void*)(uintptr_t)time_ms);
+    pthread_detach(tid);
 
   } else if (token && strcmp(token, "infinite") == 0) {
     SearchArgs* sargs = malloc(sizeof(SearchArgs));
@@ -93,10 +93,31 @@ void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
     sargs->bestmove = bestmove;
     sargs->out = out;
 
-    DebugArgs* dargs = malloc(sizeof(DebugArgs));
-    dargs->board = board;
-
-    pthread_create(&search_tid, NULL, search_thread, sargs);
-    pthread_create(&debug_tid, NULL, debug_thread, dargs);
+    pthread_mutex_lock(&search_mtx);
+    while (search_running) pthread_cond_wait(&search_done, &search_mtx);
+    stop_search = 0;
+    search_running = true;
+    pthread_mutex_unlock(&search_mtx);
+    pthread_create(&tid, NULL, search_thread, sargs);
+    pthread_detach(tid);
   }
+}
+
+void timemanager_stop(void) {
+  stop_search = 1;
+
+  pthread_mutex_lock(&search_mtx);
+  while (search_running) {
+    pthread_cond_wait(&search_done, &search_mtx);
+  }
+  pthread_mutex_unlock(&search_mtx);
+}
+
+// For unit testing
+void timemanager_wait(void) {
+  pthread_mutex_lock(&search_mtx);
+  while (search_running) {
+    pthread_cond_wait(&search_done, &search_mtx);
+  }
+  pthread_mutex_unlock(&search_mtx);
 }

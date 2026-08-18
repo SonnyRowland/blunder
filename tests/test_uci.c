@@ -1,15 +1,18 @@
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "board.h"
 #include "display.h"
 #include "move.h"
+#include "timemanager.h"
 #include "uci.h"
 #include "unity.h"
 
 void setUp(void){}
 void tearDown(void){}
 
+// Helper function to check two boards are equal
 static bool boards_equal(Board board1, Board board2){
   for(int rank = 0; rank < 8; rank++){
     for(int file = 0; file < 8; file++){
@@ -28,6 +31,16 @@ static bool boards_equal(Board board1, Board board2){
   if (board1.fullmove_count != board2.fullmove_count) return 0;
 
   return 1;
+}
+
+// Helper function to sleep test 
+void testtimer(uint32_t time_ms){
+  struct timespec tp = {
+    .tv_sec = time_ms / 1000,
+    .tv_nsec = (time_ms % 1000) * 1000000L,
+  };
+  
+  nanosleep(&tp, NULL);
 }
 
 void test_dispatch_uci(void){
@@ -112,6 +125,77 @@ void test_position_fen_en_passant(void){
   TEST_ASSERT_EQUAL_INT(board.grid[4][3], EMPTY);
 }
 
+void test_go_movetime_obvious_move(void){
+  char buf1[] = "position fen rnb1kbnr/pppp1ppp/8/4p1q1/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1";
+  char buf2[] = "go movetime 1000";
+
+  Board board = {0};
+  char res[256] = {0};
+
+  FILE* out = fmemopen(res, sizeof(res), "w");
+
+  dispatch(buf1, out, &board, &(Move){0});
+  dispatch(buf2, out, &board, &(Move){0});
+
+  timemanager_wait();
+  fclose(out);
+  
+  TEST_ASSERT_NOT_NULL(strstr(res, "bestmove f3g5"));
+}
+
+void test_go_infinite_obvious_move(void){
+  char buf1[] = "position fen r1bqkbnr/pppp1ppp/8/4p3/3QP3/5N2/PPP2PPP/RNB1KB1R b KQkq - 0 1";
+  char buf2[] = "go infinite";
+  char buf3[] = "stop";
+
+  Board board = {0};
+  char res[256] = {0};
+
+  FILE* out = fmemopen(res, sizeof(res), "w");
+
+  dispatch(buf1, out, &board, &(Move){0});
+  dispatch(buf2, out, &board, &(Move){0});
+
+  testtimer(2000);
+
+  dispatch(buf3, out, &board, &(Move){0});
+
+  timemanager_wait();
+  fclose(out);
+
+  TEST_ASSERT_NOT_NULL(strstr(res, "bestmove e5d4"));
+}
+
+void test_stop_with_no_active_search(void){
+  char buf[] = "stop";
+
+  Board board = {0};
+
+  dispatch(buf, stdout, &board, &(Move){0});
+  // If we get here, test has passed 
+  // Previous implementation would join uninitialised thread
+}
+
+void test_back_to_back_go_movetime(void){
+  char go1[] = "go movetime 200";
+  char go2[] = "go movetime 200";
+
+  Board board = get_start_pos();
+  char res[512] = {0};
+
+  FILE* out = fmemopen(res, sizeof(res), "w");
+
+  dispatch(go1, out, &board, &(Move){0});
+  dispatch(go2, out, &board, &(Move){0});
+  timemanager_wait();
+  fclose(out);
+
+  char* first = strstr(res, "bestmove");
+  TEST_ASSERT_NOT_NULL(first);
+  char* second = strstr(first + 1, "bestmove");
+  TEST_ASSERT_NOT_NULL(second);
+}
+
 int main(void){
   UNITY_BEGIN();
 
@@ -123,5 +207,10 @@ int main(void){
   RUN_TEST(test_position_fen_two_knights);
   RUN_TEST(test_position_fen_en_passant);
 
+  RUN_TEST(test_go_movetime_obvious_move);
+  RUN_TEST(test_go_infinite_obvious_move);
+  RUN_TEST(test_stop_with_no_active_search);
+  RUN_TEST(test_back_to_back_go_movetime);
+  
   return UNITY_END();
 }
