@@ -83,9 +83,9 @@ void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
     search_running = true;
     pthread_mutex_unlock(&search_mtx);
     int err = pthread_create(&tid, NULL, search_thread, sargs);
-    if (!err){
+    if (!err) {
       pthread_detach(tid);
-    }else{
+    } else {
       free(sargs);
       pthread_mutex_lock(&search_mtx);
       search_running = false;
@@ -94,9 +94,9 @@ void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
       return;
     }
     err = pthread_create(&tid, NULL, timer_thread, (void*)(uintptr_t)time_ms);
-    if (!err){
+    if (!err) {
       pthread_detach(tid);
-    }else{
+    } else {
       timemanager_stop();
       return;
     }
@@ -113,9 +113,9 @@ void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
     search_running = true;
     pthread_mutex_unlock(&search_mtx);
     int err = pthread_create(&tid, NULL, search_thread, sargs);
-    if (!err){
+    if (!err) {
       pthread_detach(tid);
-    }else{
+    } else {
       free(sargs);
       pthread_mutex_lock(&search_mtx);
       search_running = false;
