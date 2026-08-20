@@ -82,10 +82,24 @@ void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
     stop_search = 0;
     search_running = true;
     pthread_mutex_unlock(&search_mtx);
-    pthread_create(&tid, NULL, search_thread, sargs);
-    pthread_detach(tid);
-    pthread_create(&tid, NULL, timer_thread, (void*)(uintptr_t)time_ms);
-    pthread_detach(tid);
+    int err = pthread_create(&tid, NULL, search_thread, sargs);
+    if (!err){
+      pthread_detach(tid);
+    }else{
+      free(sargs);
+      pthread_mutex_lock(&search_mtx);
+      search_running = false;
+      pthread_cond_broadcast(&search_done);
+      pthread_mutex_unlock(&search_mtx);
+      return;
+    }
+    err = pthread_create(&tid, NULL, timer_thread, (void*)(uintptr_t)time_ms);
+    if (!err){
+      pthread_detach(tid);
+    }else{
+      timemanager_stop();
+      return;
+    }
 
   } else if (token && strcmp(token, "infinite") == 0) {
     SearchArgs* sargs = malloc(sizeof(SearchArgs));
@@ -98,8 +112,16 @@ void timemanager_go(Board* board, char* args, Move* bestmove, FILE* out) {
     stop_search = 0;
     search_running = true;
     pthread_mutex_unlock(&search_mtx);
-    pthread_create(&tid, NULL, search_thread, sargs);
-    pthread_detach(tid);
+    int err = pthread_create(&tid, NULL, search_thread, sargs);
+    if (!err){
+      pthread_detach(tid);
+    }else{
+      free(sargs);
+      pthread_mutex_lock(&search_mtx);
+      search_running = false;
+      pthread_cond_broadcast(&search_done);
+      pthread_mutex_unlock(&search_mtx);
+    }
   }
 }
 
