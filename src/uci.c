@@ -17,6 +17,7 @@ static void handle_position(char* args, FILE* out, Board* board,
                             Move* bestmove);
 static void handle_go(char* args, FILE* out, Board* board, Move* bestmove);
 static void handle_stop(char* args, FILE* out, Board* board, Move* bestmove);
+static void handle_quit(char* args, FILE* out, Board* board, Move* bestmove);
 
 typedef struct {
   const char* cmd;
@@ -26,7 +27,7 @@ typedef struct {
 const Command commands[] = {
     {"uci", handle_uci},           {"isready", handle_isready},
     {"position", handle_position}, {"go", handle_go},
-    {"stop", handle_stop},
+    {"stop", handle_stop},         {"quit", handle_quit},
 };
 
 void dispatch(char* buf, FILE* out, Board* board, Move* bestmove) {
@@ -125,4 +126,13 @@ static void handle_stop(char* args, FILE* out, Board* board, Move* bestmove) {
   (void)bestmove;
 
   timemanager_stop();
+}
+
+static void handle_quit(char* args, FILE* out, Board* board, Move* bestmove){
+  (void)args;
+  (void)out;
+  (void)board;
+  (void)bestmove;
+
+  exit(EXIT_SUCCESS);
 }
