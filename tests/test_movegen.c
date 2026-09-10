@@ -593,6 +593,46 @@ void test_move_gen_castle_blocked_q_black_near_rook(void){
   TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
 }
 
+void test_move_gen_castle_k_rook_taken_white(void){
+  const char* fen = "rnbqkb1r/pppppppp/8/8/8/8/PPPPPPPP/RNBQK2n w KQkq - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  Move test_move = (Move) {0, 4, 0, 6, 0};
+
+  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+}
+
+void test_move_gen_castle_k_rook_taken_black(void){
+  const char* fen = "r1b1k2N/1pbp2pp/p3p3/4P3/5P2/3p2PB/PP1B3P/2K2R2 b kq - 0 23";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  Move test_move = (Move) {7, 4, 7, 6, 0};
+
+  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+}
+
+void test_move_gen_castle_q_rook_taken_white(void){
+  const char* fen = "rnbqk1nr/pppppppp/8/8/8/8/PPPPPPPP/b3KBNR w KQkq - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  Move test_move = (Move) {0, 4, 0, 2, 0};
+
+  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+}
+
+void test_move_gen_castle_q_rook_taken_black(void){
+  const char* fen = "B3kbnr/p1pppppp/8/8/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(board);
+
+  Move test_move = (Move) {7, 4, 7, 2, 0};
+
+  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+}
+
 void test_move_gen_promotion_white(void) {
   const char* fen = "8/4P3/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
@@ -695,6 +735,10 @@ int main(void) {
   RUN_TEST(test_move_gen_castle_k_blocked_q_black);
   RUN_TEST(test_move_gen_castle_blocked_q_white_near_rook);
   RUN_TEST(test_move_gen_castle_blocked_q_black_near_rook);
+  RUN_TEST(test_move_gen_castle_k_rook_taken_white);
+  RUN_TEST(test_move_gen_castle_k_rook_taken_black);
+  RUN_TEST(test_move_gen_castle_q_rook_taken_white);
+  RUN_TEST(test_move_gen_castle_q_rook_taken_black);
   RUN_TEST(test_move_gen_promotion_white);
   RUN_TEST(test_move_gen_promotion_black);
   RUN_TEST(test_move_gen_promotion_on_capture_white);

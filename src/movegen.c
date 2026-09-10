@@ -257,7 +257,8 @@ static void generate_castling_moves(int rank, int file, Board board,
   bool move_through_check = false;
   // Ensure clear path between king and rook
   if (can_castle_k && board.grid[rank][file + 1] == EMPTY &&
-      board.grid[rank][file + 2] == EMPTY) {
+      board.grid[rank][file + 2] == EMPTY &&
+      board.grid[rank][file + 3] == W_ROOK * board.turn) {
     // Prevent castle through check
     Move temp_move1 = (Move){rank, file, rank, file + 1};
     Piece piece_taken1 = apply_move(&board, temp_move1);
@@ -283,7 +284,8 @@ static void generate_castling_moves(int rank, int file, Board board,
   move_through_check = false;
   if (can_castle_q && board.grid[rank][file - 1] == EMPTY &&
       board.grid[rank][file - 2] == EMPTY &&
-      board.grid[rank][file - 3] == EMPTY) {
+      board.grid[rank][file - 3] == EMPTY &&
+      board.grid[rank][file - 4] == W_ROOK * board.turn) {
     Move temp_move1 = (Move){rank, file, rank, file - 1};
     Piece piece_taken1 = apply_move(&board, temp_move1);
     if (is_in_check(board)) {
