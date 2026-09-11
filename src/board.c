@@ -30,8 +30,8 @@ bool is_in_check(Board board) {
   if (king_rank > 0) {
     rank_idx = king_rank - 1;
     while (rank_idx > 0 && board.grid[rank_idx][king_file] == EMPTY) rank_idx--;
-    if (board.grid[rank_idx][king_file] * board.turn == -4 ||
-        board.grid[rank_idx][king_file] * board.turn == -5)
+    if (board.grid[rank_idx][king_file] * board.turn == B_ROOK ||
+        board.grid[rank_idx][king_file] * board.turn == B_QUEEN)
       return 1;
   }
 
@@ -40,24 +40,24 @@ bool is_in_check(Board board) {
     while (rank_idx < 7 && board.grid[rank_idx][king_file] == EMPTY) {
       rank_idx++;
     }
-    if (board.grid[rank_idx][king_file] * board.turn == -4 ||
-        board.grid[rank_idx][king_file] * board.turn == -5)
+    if (board.grid[rank_idx][king_file] * board.turn == B_ROOK ||
+        board.grid[rank_idx][king_file] * board.turn == B_QUEEN)
       return 1;
   }
 
   if (king_file > 0) {
     file_idx = king_file - 1;
     while (file_idx > 0 && board.grid[king_rank][file_idx] == EMPTY) file_idx--;
-    if (board.grid[king_rank][file_idx] * board.turn == -4 ||
-        board.grid[king_rank][file_idx] * board.turn == -5)
+    if (board.grid[king_rank][file_idx] * board.turn == B_ROOK ||
+        board.grid[king_rank][file_idx] * board.turn == B_QUEEN)
       return 1;
   }
 
   if (king_file < 7) {
     file_idx = king_file + 1;
     while (file_idx < 7 && board.grid[king_rank][file_idx] == EMPTY) file_idx++;
-    if (board.grid[king_rank][file_idx] * board.turn == -4 ||
-        board.grid[king_rank][file_idx] * board.turn == -5)
+    if (board.grid[king_rank][file_idx] * board.turn == B_ROOK ||
+        board.grid[king_rank][file_idx] * board.turn == B_QUEEN)
       return 1;
   }
 
@@ -70,8 +70,8 @@ bool is_in_check(Board board) {
       rank_idx--;
       file_idx--;
     }
-    if (board.grid[rank_idx][file_idx] * board.turn == -3 ||
-        board.grid[rank_idx][file_idx] * board.turn == -5)
+    if (board.grid[rank_idx][file_idx] * board.turn == B_BISHOP ||
+        board.grid[rank_idx][file_idx] * board.turn == B_QUEEN)
       return 1;
   }
 
@@ -83,8 +83,8 @@ bool is_in_check(Board board) {
       rank_idx--;
       file_idx++;
     }
-    if (board.grid[rank_idx][file_idx] * board.turn == -3 ||
-        board.grid[rank_idx][file_idx] * board.turn == -5)
+    if (board.grid[rank_idx][file_idx] * board.turn == B_BISHOP ||
+        board.grid[rank_idx][file_idx] * board.turn == B_QUEEN)
       return 1;
   }
 
@@ -96,8 +96,8 @@ bool is_in_check(Board board) {
       rank_idx++;
       file_idx--;
     }
-    if (board.grid[rank_idx][file_idx] * board.turn == -3 ||
-        board.grid[rank_idx][file_idx] * board.turn == -5)
+    if (board.grid[rank_idx][file_idx] * board.turn == B_BISHOP ||
+        board.grid[rank_idx][file_idx] * board.turn == B_QUEEN)
       return 1;
   }
 
@@ -109,28 +109,32 @@ bool is_in_check(Board board) {
       rank_idx++;
       file_idx++;
     }
-    if (board.grid[rank_idx][file_idx] * board.turn == -3 ||
-        board.grid[rank_idx][file_idx] * board.turn == -5)
+    if (board.grid[rank_idx][file_idx] * board.turn == B_BISHOP ||
+        board.grid[rank_idx][file_idx] * board.turn == B_QUEEN)
       return 1;
   }
 
+  // Find knights
   for (rank_idx = king_rank - 2; rank_idx <= king_rank + 2; rank_idx++) {
     if (rank_idx < 0 || rank_idx > 7) continue;
     for (file_idx = king_file - 2; file_idx <= king_file + 2; file_idx++) {
       if (file_idx < 0 || file_idx > 7) continue;
       if (abs(king_rank - rank_idx) == abs(king_file - file_idx)) continue;
       if ((king_rank - rank_idx) == 0 || (king_file - file_idx) == 0) continue;
-      if (board.grid[rank_idx][file_idx] * board.turn == -2) return 1;
+      if (board.grid[rank_idx][file_idx] * board.turn == B_KNIGHT) return 1;
     }
   }
 
+  // Find pawns
   rank_idx = king_rank + board.turn;
   if (rank_idx >= 0 && rank_idx <= 7) {
     file_idx = king_file - 1;
-    if (file_idx >= 0 && (board.grid[rank_idx][file_idx] == -1 * board.turn))
+    if (file_idx >= 0 &&
+        (board.grid[rank_idx][file_idx] == B_PAWN * board.turn))
       return 1;
     file_idx = king_file + 1;
-    if (file_idx <= 7 && (board.grid[rank_idx][file_idx] == -1 * board.turn))
+    if (file_idx <= 7 &&
+        (board.grid[rank_idx][file_idx] == B_PAWN * board.turn))
       return 1;
   }
 
