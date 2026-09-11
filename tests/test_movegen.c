@@ -393,6 +393,24 @@ void test_move_gen_king_takes_black(void) {
   TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
 }
 
+void test_move_gen_king_checked_king_white(void) {
+  Board board = fen_to_board("8/8/3k4/3n4/5K2/8/8/6R1 w - - 0 1");
+  MoveList moves = generate_legal_moves(board);
+
+  Move move = (Move) {3, 5, 4, 4, 0};
+
+  TEST_ASSERT_FALSE(move_list_contains(moves, move));
+}
+
+void test_move_gen_king_checked_king_black(void) {
+  Board board = fen_to_board("3r4/p1p3pR/1p3kP1/7K/8/5R2/8/8 b - - 6 49");
+  MoveList moves = generate_legal_moves(board);
+
+  Move move = (Move){5, 5, 5, 6, 0};
+
+  TEST_ASSERT_FALSE(move_list_contains(moves, move));
+}
+
 void test_move_gen_castle_k_white(void) {
   const char* fen = "r1bqkbnr/ppp2ppp/2np4/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4";
   Board board = fen_to_board(fen);
@@ -714,6 +732,8 @@ int main(void) {
   RUN_TEST(test_move_gen_king_corner);
   RUN_TEST(test_move_gen_king_takes_white);
   RUN_TEST(test_move_gen_king_takes_black);
+  RUN_TEST(test_move_gen_king_checked_king_white);
+  RUN_TEST(test_move_gen_king_checked_king_black);
   RUN_TEST(test_move_gen_castle_k_white);
   RUN_TEST(test_move_gen_castle_k_black);
   RUN_TEST(test_move_gen_castle_q_white);

@@ -134,5 +134,16 @@ bool is_in_check(Board board) {
       return 1;
   }
 
+  // Find opponent king
+  for (rank_idx = king_rank - 1; rank_idx <= king_rank + 1; rank_idx++) {
+    if (rank_idx < 0 || rank_idx > 7) continue;
+    for (file_idx = king_file - 1; file_idx <= king_file + 1; file_idx++) {
+      if (file_idx < 0 || file_idx > 7) continue;
+      if (board.grid[rank_idx][file_idx] == B_KING * board.turn) {
+        return 1;
+      }
+    }
+  }
+
   return 0;
 }
