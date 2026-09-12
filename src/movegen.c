@@ -313,18 +313,22 @@ static void generate_promotion_moves(int rank, int file, Board board,
   Move temp_move;
   int rank_idx = rank + board.turn;
 
-  for (int i = 2; i < 6; i++) {
-    temp_move = (Move){rank, file, rank_idx, file, i * board.turn};
-    add_move_if_legal(move_list, &board, temp_move);
+  for (int promo_piece = 2; promo_piece < 6; promo_piece++) {
+    temp_move = (Move){rank, file, rank_idx, file, promo_piece * board.turn};
+    if (board.grid[rank_idx][file] == EMPTY) {
+      add_move_if_legal(move_list, &board, temp_move);
+    }
 
     if ((file - 1 >= 0) &&
         ((board.grid[rank_idx][file - 1] * board.turn) < 0)) {
-      temp_move = (Move){rank, file, rank_idx, file - 1, i * board.turn};
+      temp_move =
+          (Move){rank, file, rank_idx, file - 1, promo_piece * board.turn};
       add_move_if_legal(move_list, &board, temp_move);
     }
     if (((file + 1) < 8) &&
         ((board.grid[rank_idx][file + 1] * board.turn) < 0)) {
-      temp_move = (Move){rank, file, rank_idx, file + 1, i * board.turn};
+      temp_move =
+          (Move){rank, file, rank_idx, file + 1, promo_piece * board.turn};
       add_move_if_legal(move_list, &board, temp_move);
     }
   }
