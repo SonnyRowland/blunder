@@ -11,7 +11,7 @@ void setUp(void){}
 void tearDown(void){}
 
 // Helper functions
-// Kiwipete is a notoriously complex test position, see README for information
+// Kiwipete is a notoriously complex test position used to test move generation, see README for information
 Board get_kiwipete(void){
   return fen_to_board("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - ");
 }
