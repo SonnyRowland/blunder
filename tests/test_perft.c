@@ -73,8 +73,6 @@ void perft_kiwipete_3(void){
 }
 
 void perft_kiwipete_4(void){
-  TEST_IGNORE_MESSAGE("Known failure: returns wrong leafnode count. Needs perft divide to localise");
-
   Board board = get_kiwipete();
   uint64_t leafnodes = perft(&board, 4);
 
