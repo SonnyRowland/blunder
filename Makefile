@@ -31,7 +31,7 @@ test:
 
 .PHONY: format
 format:
-	clang-format --style=Google -i $(SRCS)
+	clang-format -i $(SRCS)
 
 CFLAGS = -Wall -Wextra
 DEBUG_FLAGS = -g -O0

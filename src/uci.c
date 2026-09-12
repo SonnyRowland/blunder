@@ -128,7 +128,7 @@ static void handle_stop(char* args, FILE* out, Board* board, Move* bestmove) {
   timemanager_stop();
 }
 
-static void handle_quit(char* args, FILE* out, Board* board, Move* bestmove){
+static void handle_quit(char* args, FILE* out, Board* board, Move* bestmove) {
   (void)args;
   (void)out;
   (void)board;
