@@ -1,7 +1,7 @@
 TARGET = blunder
 ARTEFACTS = build/artefacts
 
-SRCS = src/main.c src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c src/timemanager.c
+SRCS = src/main.c src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c src/timemanager.c src/perft.c
 INCLUDES = -Iinclude
 
 all: $(ARTEFACTS)/$(TARGET)
@@ -11,7 +11,7 @@ $(ARTEFACTS)/$(TARGET): $(SRCS)
 	cc $(INCLUDES) -o $(ARTEFACTS)/$(TARGET) $(SRCS)
 
 UNITY = vendor/unity/unity.c
-TEST_SRCS = src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c src/timemanager.c
+TEST_SRCS = src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c src/timemanager.c src/perft.c
 
 .PHONY: debug
 debug: $(SRCS)
