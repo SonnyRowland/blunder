@@ -9,7 +9,7 @@ uint64_t perft(Board* board, int depth) {
 
   uint64_t leafnodes = 0;
 
-  MoveList movelist = generate_legal_moves(*board);
+  MoveList movelist = generate_legal_moves(board);
 
   for (int i = 0; i < movelist.count; i++) {
     Undo undo = (Undo){0};
@@ -23,7 +23,7 @@ uint64_t perft(Board* board, int depth) {
 }
 
 void perft_divide(Board* board, int depth) {
-  MoveList movelist = generate_legal_moves(*board);
+  MoveList movelist = generate_legal_moves(board);
 
   for (int i = 0; i < movelist.count; i++) {
     Undo undo = (Undo){0};

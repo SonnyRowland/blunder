@@ -4,6 +4,6 @@
 #include "move.h"
 #include "board.h"
 
-MoveList generate_legal_moves(Board board);
+MoveList generate_legal_moves(Board* board);
 
 #endif
