@@ -26,7 +26,7 @@ static int alphabeta(Board* board, Move* bestmove, int depthlimit, int depth,
                      int alpha, int beta) {
   if (depth == 0 || stop_search) return eval_material(board);
 
-  MoveList move_list = generate_legal_moves(*board);
+  MoveList move_list = generate_legal_moves(board);
   Undo undo;
 
   if (board->turn == TURN_WHITE) {
