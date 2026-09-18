@@ -4,18 +4,20 @@
 
 #include "movegen.h"
 
-uint64_t perft(Board* board, int depth) {
+uint64_t perft(Board* board, int depth, bool bulk) {
   if (depth == 0) return 1;
 
   uint64_t leafnodes = 0;
 
   MoveList movelist = generate_legal_moves(board);
 
+  if (depth == 1 && bulk) return movelist.count;
+
   for (int i = 0; i < movelist.count; i++) {
     Undo undo = (Undo){0};
 
     make_move(board, movelist.moves[i], &undo);
-    leafnodes += perft(board, depth - 1);
+    leafnodes += perft(board, depth - 1, bulk);
     unmake_move(board, movelist.moves[i], &undo);
   }
 
@@ -29,7 +31,7 @@ void perft_divide(Board* board, int depth) {
     Undo undo = (Undo){0};
 
     make_move(board, movelist.moves[i], &undo);
-    uint64_t leafnodes = perft(board, depth - 1);
+    uint64_t leafnodes = perft(board, depth - 1, false);
     unmake_move(board, movelist.moves[i], &undo);
 
     char buf[6];

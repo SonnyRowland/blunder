@@ -1,7 +1,7 @@
 TARGET = blunder
 ARTEFACTS = build/artefacts
 
-SRCS = src/main.c src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c src/timemanager.c src/perft.c
+SRCS = src/main.c src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c src/timemanager.c src/perft.c src/bench.c
 INCLUDES = -Iinclude
 
 all: $(ARTEFACTS)/$(TARGET)
