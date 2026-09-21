@@ -3,6 +3,7 @@
 
 #include "board.h"
 
+void bench(int depth);
 void bench_perft(Board* board, int depth);
 
 #endif
