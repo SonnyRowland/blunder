@@ -26,7 +26,7 @@ typedef struct {
 void* search_thread(void* args) {
   SearchArgs* sargs = (SearchArgs*)args;
 
-  iddfs(sargs->board, sargs->bestmove);
+  iddfs(sargs->board, sargs->bestmove, MAX_PLY);
 
   char lan[6];
   lan_from_move(*sargs->bestmove, lan);
