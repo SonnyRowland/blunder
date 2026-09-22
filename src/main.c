@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <string.h>
 
+#include "bench.h"
 #include "board.h"
 #include "move.h"
 #include "uci.h"
@@ -12,7 +14,16 @@ static void gameloop(FILE* in, FILE* out);
 int main(void) { printf("debug\n"); }
 
 #else
-int main(void) { gameloop(stdin, stdout); }
+int main(int argc, char* argv[]) {
+  if (argc > 1 && strcmp(argv[1], "bench") == 0) {
+    bench();
+    return 0;
+  }
+
+  gameloop(stdin, stdout);
+
+  return 0;
+}
 #endif
 
 static void gameloop(FILE* in, FILE* out) {

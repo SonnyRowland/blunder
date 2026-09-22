@@ -3,7 +3,9 @@
 
 #include "board.h"
 
-void bench(int depth);
+#define BENCH_DEFAULT_DEPTH 5
+
+void bench(void);
 void bench_perft(Board* board, int depth);
 
 #endif
