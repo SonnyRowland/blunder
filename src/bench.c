@@ -43,7 +43,7 @@ static int64_t elapsed_ns(struct timespec* begin, struct timespec* end) {
          (int64_t)(end->tv_nsec - begin->tv_nsec);
 }
 
-void bench(int depth) {
+void bench(void) {
   struct timespec begin, end;
   uint64_t nodecount = 0;
   int64_t totaltime_ns = 0;
@@ -53,7 +53,7 @@ void bench(int depth) {
     Move bestmove;
 
     clock_gettime(CLOCK_MONOTONIC, &begin);
-    iddfs(&board, &bestmove, depth);
+    iddfs(&board, &bestmove, BENCH_DEFAULT_DEPTH);
     clock_gettime(CLOCK_MONOTONIC, &end);
 
     totaltime_ns += elapsed_ns(&begin, &end);
@@ -62,7 +62,7 @@ void bench(int depth) {
 
   double totaltime_ms = totaltime_ns / 1e6;
   printf("\n================================\n");
-  printf("Depth: %i\n", depth);
+  printf("Depth: %i\n", BENCH_DEFAULT_DEPTH);
   printf("Total nodes: %" PRIu64 "\n", nodecount);
   printf("Total time: %.0f ms\n", totaltime_ms);
   printf("Nodes per second: %.0f\n",
