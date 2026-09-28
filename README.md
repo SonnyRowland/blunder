@@ -8,6 +8,12 @@ Clone the repository from https://github.com/SonnyRowland/blunder
 git clone https://github.com/SonnyRowland/blunder
 ```
 
+## Performance
+
+Search efficiency and speed are tracked in [bench.md](bench.md). Run
+`./blunder bench`
+to benchmark the current build.
+
 ## References
 
 ### Piece square table values
