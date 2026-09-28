@@ -4,19 +4,18 @@ ARTEFACTS = build/artefacts
 SRCS = src/main.c src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c src/timemanager.c src/perft.c src/bench.c
 INCLUDES = -Iinclude
 
+CFLAGS = -Wall -Wextra
+RELEASE_FLAGS = -O2 -DNDEBUG
+DEBUG_FLAGS = -g -O0
+
 all: $(ARTEFACTS)/$(TARGET)
 
 $(ARTEFACTS)/$(TARGET): $(SRCS)
 	mkdir -p $(ARTEFACTS)
-	cc $(INCLUDES) -o $(ARTEFACTS)/$(TARGET) $(SRCS)
+	cc $(INCLUDES) $(CFLAGS) $(RELEASE_FLAGS) -o $(ARTEFACTS)/$(TARGET) $(SRCS)
 
 UNITY = vendor/unity/unity.c
 TEST_SRCS = src/fen.c src/display.c src/move.c src/board.c src/movegen.c src/eval.c src/movesearch.c src/uci.c src/timemanager.c src/perft.c
-
-.PHONY: debug
-debug: $(SRCS)
-	mkdir -p $(ARTEFACTS)
-	cc $(INCLUDES) -DDEBUG -o $(ARTEFACTS)/$(TARGET) $(SRCS)
 
 .PHONY: test
 test:
@@ -32,9 +31,6 @@ test:
 .PHONY: format
 format:
 	clang-format -i $(SRCS)
-
-CFLAGS = -Wall -Wextra
-DEBUG_FLAGS = -g -O0
 
 .PHONY: debug
 debug: $(ARTEFACTS)/$(TARGET)-debug
