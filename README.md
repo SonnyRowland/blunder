@@ -32,3 +32,7 @@ to benchmark the current build.
 
 - Benchmark positions were taken from [Stockfish](https://github.com/official-stockfish/Stockfish)
   (`src/benchmark.cpp`)
+
+### MVV-LVA
+
+- Most Valuable Victim, Least Valuable Attacker (MVV-LVA) technique was lifted from [Rustic Chess](https://rustic-chess.org/search/ordering/mvv_lva.html)
