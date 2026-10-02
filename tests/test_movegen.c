@@ -19,6 +19,19 @@ static int move_list_contains(MoveList move_list, Move move) {
   return 0;
 }
 
+// Helper function for checking two moves are the same
+static int moves_equal(Move move1, Move move2){
+  if (move1.from_rank == move2.from_rank && 
+      move1.from_file == move2.from_file && 
+      move1.to_rank == move2.to_rank && 
+      move1.to_file == move2.to_file && 
+      move1.promotion == move2.promotion){
+    return 1;
+  }
+
+  return 0;
+}
+
 void test_move_gen_empty_board(void) {
   const char* fen = "8/8/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
@@ -723,6 +736,34 @@ void test_move_gen_promotion_blocked_black(void){
   TEST_ASSERT_FALSE(move_list_contains(moves, move4));
 }
 
+void test_mvv_lva_all_pieces_white(void){
+  const char* fen = "8/8/4q3/1r6/3N4/8/2b5/8 w - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(&board);
+
+  Move move1 = (Move) {3, 3, 5, 4, 0};
+  Move move2 = (Move) {3, 3, 4, 1, 0};
+  Move move3 = (Move) {3, 3, 1, 2, 0};
+
+  TEST_ASSERT_TRUE(moves_equal(move1, moves.moves[0]));
+  TEST_ASSERT_TRUE(moves_equal(move2, moves.moves[1]));
+  TEST_ASSERT_TRUE(moves_equal(move3, moves.moves[2]));
+}
+
+void test_mvv_lva_all_pieces_black(void){
+  const char* fen = "8/8/2Q5/5B2/3n4/8/4R3/8 b - - 0 1";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(&board);
+
+  Move move1 = (Move) {3, 3, 5, 2, 0};
+  Move move2 = (Move) {3, 3, 1, 4, 0};
+  Move move3 = (Move) {3, 3, 4, 5, 0};
+
+  TEST_ASSERT_TRUE(moves_equal(move1, moves.moves[0]));
+  TEST_ASSERT_TRUE(moves_equal(move2, moves.moves[1]));
+  TEST_ASSERT_TRUE(moves_equal(move3, moves.moves[2]));
+}
+
 int main(void) {
   UNITY_BEGIN();
 
@@ -797,6 +838,8 @@ int main(void) {
   RUN_TEST(test_move_gen_promotion_on_capture_black);
   RUN_TEST(test_move_gen_promotion_blocked_white);
   RUN_TEST(test_move_gen_promotion_blocked_black);
+  RUN_TEST(test_mvv_lva_all_pieces_white);
+  RUN_TEST(test_mvv_lva_all_pieces_black);
 
   return UNITY_END();
-} 
+}

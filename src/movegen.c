@@ -22,6 +22,18 @@ static void generate_promotion_moves(int rank, int file, Board* board,
                                      MoveList* move_list);
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move);
 
+static void order_moves(MoveList* move_list, Board* board);
+
+static const int mvv_lva[7][7] = {
+    {0, 0, 0, 0, 0, 0, 0},  // victim None, attacker None, P, N, B, R, Q, K
+    {0, 15, 14, 13, 12, 11, 10},  // victim PAWN, ''
+    {0, 25, 24, 23, 22, 21, 20},  // victim KNIGHT, ''
+    {0, 35, 34, 33, 32, 31, 30},  // victim BISHOP, ''
+    {0, 45, 44, 43, 42, 41, 40},  // victim ROOK, ''
+    {0, 55, 54, 53, 52, 51, 50},  // victim QUEEN, ''
+    {0, 0, 0, 0, 0, 0, 0},        // victim KING, ''
+};
+
 MoveList generate_legal_moves(Board* board) {
   MoveList move_list = {.count = 0};
 
@@ -73,6 +85,7 @@ MoveList generate_legal_moves(Board* board) {
     }
   }
 
+  order_moves(&move_list, board);
   return move_list;
 }
 
@@ -340,4 +353,32 @@ static void add_move_if_legal(MoveList* move_list, Board* board, Move move) {
     move_list->moves[move_list->count++] = move;
   }
   revert_move(board, move, piece_taken);
+}
+
+static void order_moves(MoveList* move_list, Board* board) {
+  int orderscores[256];
+
+  for (int i = 0; i < move_list->count; i++) {
+    Move move = move_list->moves[i];
+    Piece victim = (Piece)abs(board->grid[move.to_rank][move.to_file]);
+    Piece attacker = (Piece)abs(board->grid[move.from_rank][move.from_file]);
+
+    orderscores[i] = mvv_lva[victim][attacker];
+  }
+
+  // insertion sort to order move_list
+  for (int i = 1; i < move_list->count; i++) {
+    for (int j = i - 1; j >= 0; j--) {
+      if (orderscores[j] < orderscores[j + 1]) {
+        int tmp_score = orderscores[j];
+        Move tmp_move = move_list->moves[j];
+        orderscores[j] = orderscores[j + 1];
+        move_list->moves[j] = move_list->moves[j + 1];
+        orderscores[j + 1] = tmp_score;
+        move_list->moves[j + 1] = tmp_move;
+      } else {
+        break;
+      }
+    }
+  }
 }
