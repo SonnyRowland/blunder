@@ -360,7 +360,16 @@ static void order_moves(MoveList* move_list, Board* board) {
 
   for (int i = 0; i < move_list->count; i++) {
     Move move = move_list->moves[i];
-    Piece victim = (Piece)abs(board->grid[move.to_rank][move.to_file]);
+    Piece victim;
+
+    // Check for en passant moves
+    if (board->grid[move.from_rank][move.from_file] == (Piece)board->turn &&
+        board->ep_file == move.to_file && board->ep_rank == move.to_rank) {
+      victim = W_PAWN;
+    } else {
+      victim = (Piece)abs(board->grid[move.to_rank][move.to_file]);
+    }
+
     Piece attacker = (Piece)abs(board->grid[move.from_rank][move.from_file]);
 
     orderscores[i] = mvv_lva[victim][attacker];

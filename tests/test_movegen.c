@@ -764,6 +764,28 @@ void test_mvv_lva_all_pieces_black(void){
   TEST_ASSERT_TRUE(moves_equal(move3, moves.moves[2]));
 }
 
+void test_mvv_lva_en_passant_white(void){
+  const char* fen = "rnbqkbnr/ppp1pppp/8/2PpP3/8/7N/PP1P1PPP/RNBQKB1R w KQkq d6 0 6";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(&board);
+
+  Move move1 = (Move) {4, 2, 5, 3, 0};
+  Move move2 = (Move) {4, 4, 5, 3, 0};
+
+  TEST_ASSERT_TRUE(moves_equal(move1, moves.moves[0]) || moves_equal(move2, moves.moves[0]));
+}
+
+void test_mvv_lva_en_passant_black(void){
+  const char* fen = "rnbqkbnr/ppppp1p1/8/8/5pPp/8/PPPPPP1P/RNBQKBNR b KQkq g3 0 5";
+  Board board = fen_to_board(fen);
+  MoveList moves = generate_legal_moves(&board);
+
+  Move move1 = (Move) {3, 5, 2, 6, 0};
+  Move move2 = (Move) {3, 7, 2, 6, 0};
+
+  TEST_ASSERT_TRUE(moves_equal(move1, moves.moves[0]) || moves_equal(move2, moves.moves[0]));
+}
+
 int main(void) {
   UNITY_BEGIN();
 
@@ -840,6 +862,8 @@ int main(void) {
   RUN_TEST(test_move_gen_promotion_blocked_black);
   RUN_TEST(test_mvv_lva_all_pieces_white);
   RUN_TEST(test_mvv_lva_all_pieces_black);
+  RUN_TEST(test_mvv_lva_en_passant_white);
+  RUN_TEST(test_mvv_lva_en_passant_black);
 
   return UNITY_END();
 }
