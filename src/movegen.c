@@ -22,8 +22,6 @@ static void generate_promotion_moves(int rank, int file, Board* board,
                                      MoveList* move_list);
 static void add_move_if_legal(MoveList* move_list, Board* board, Move move);
 
-static void order_moves(MoveList* move_list, Board* board);
-
 static const int mvv_lva[7][7] = {
     {0, 0, 0, 0, 0, 0, 0},  // victim None, attacker None, P, N, B, R, Q, K
     {0, 15, 14, 13, 12, 11, 10},  // victim PAWN, ''
@@ -85,7 +83,6 @@ MoveList generate_legal_moves(Board* board) {
     }
   }
 
-  order_moves(&move_list, board);
   return move_list;
 }
 
@@ -355,11 +352,9 @@ static void add_move_if_legal(MoveList* move_list, Board* board, Move move) {
   revert_move(board, move, piece_taken);
 }
 
-static void order_moves(MoveList* move_list, Board* board) {
-  int orderscores[256];
-
-  for (int i = 0; i < move_list->count; i++) {
-    Move move = move_list->moves[i];
+void score_moves(const MoveList* movelist, Board* board, int scores[256]) {
+  for (int i = 0; i < movelist->count; i++) {
+    Move move = movelist->moves[i];
     Piece victim;
 
     // Check for en passant moves
@@ -372,22 +367,21 @@ static void order_moves(MoveList* move_list, Board* board) {
 
     Piece attacker = (Piece)abs(board->grid[move.from_rank][move.from_file]);
 
-    orderscores[i] = mvv_lva[victim][attacker];
+    scores[i] = mvv_lva[victim][attacker];
   }
+}
 
-  // insertion sort to order move_list
-  for (int i = 1; i < move_list->count; i++) {
-    for (int j = i - 1; j >= 0; j--) {
-      if (orderscores[j] < orderscores[j + 1]) {
-        int tmp_score = orderscores[j];
-        Move tmp_move = move_list->moves[j];
-        orderscores[j] = orderscores[j + 1];
-        move_list->moves[j] = move_list->moves[j + 1];
-        orderscores[j + 1] = tmp_score;
-        move_list->moves[j + 1] = tmp_move;
-      } else {
-        break;
-      }
+Move pickmove(MoveList* movelist, int scores[256], int index) {
+  for (int i = movelist->count - 1; i > index; i--) {
+    if (scores[i] > scores[i - 1]) {
+      int tmpscore = scores[i];
+      Move tmpmove = movelist->moves[i];
+      scores[i] = scores[i - 1];
+      movelist->moves[i] = movelist->moves[i - 1];
+      scores[i - 1] = tmpscore;
+      movelist->moves[i - 1] = tmpmove;
     }
   }
+
+  return movelist->moves[index];
 }

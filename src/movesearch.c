@@ -32,15 +32,18 @@ static int alphabeta(Board* board, Move* bestmove, int depthlimit, int depth,
   nodecount++;
   if (depth == 0 || stop_search) return eval_material(board);
 
+  int scores[256];
   MoveList move_list = generate_legal_moves(board);
+  score_moves(&move_list, board, scores);
   Undo undo;
 
   if (board->turn == TURN_WHITE) {
     int best = INT_MIN;
     for (int i = 0; i < move_list.count; i++) {
-      make_move(board, move_list.moves[i], &undo);
+      Move move = pickmove(&move_list, scores, i);
+      make_move(board, move, &undo);
       int val = alphabeta(board, bestmove, depthlimit, depth - 1, alpha, beta);
-      unmake_move(board, move_list.moves[i], &undo);
+      unmake_move(board, move, &undo);
       if (val > best) {
         best = val;
         if (depth == depthlimit) *bestmove = move_list.moves[i];
@@ -52,9 +55,10 @@ static int alphabeta(Board* board, Move* bestmove, int depthlimit, int depth,
   } else {
     int best = INT_MAX;
     for (int i = 0; i < move_list.count; i++) {
-      make_move(board, move_list.moves[i], &undo);
+      Move move = pickmove(&move_list, scores, i);
+      make_move(board, move, &undo);
       int val = alphabeta(board, bestmove, depthlimit, depth - 1, alpha, beta);
-      unmake_move(board, move_list.moves[i], &undo);
+      unmake_move(board, move, &undo);
       if (val < best) {
         best = val;
         if (depth == depthlimit) *bestmove = move_list.moves[i];
