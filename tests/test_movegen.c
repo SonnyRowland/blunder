@@ -8,9 +8,9 @@ void setUp(void) {}
 void tearDown(void) {}
 
 // Helper function for verifying MoveList contains certain move
-static int move_list_contains(MoveList move_list, Move move) {
-  for (int i = 0; i < move_list.count; i++) {
-    Move m = move_list.moves[i];
+static int movelist_contains(MoveList movelist, Move move) {
+  for (int i = 0; i < movelist.count; i++) {
+    Move m = movelist.moves[i];
     if (m.from_rank == move.from_rank && m.from_file == move.from_file && m.to_rank == move.to_rank && m.to_file == move.to_file)
     {
       return 1;
@@ -35,763 +35,763 @@ static int moves_equal(Move move1, Move move2){
 void test_move_gen_empty_board(void) {
   const char* fen = "8/8/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(0, moves.count);
+  TEST_ASSERT_EQUAL_INT(0, movelist.count);
 }
 
 void test_move_gen_start_pos(void) {
   Board board = get_start_pos();
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(20, moves.count);
+  TEST_ASSERT_EQUAL_INT(20, movelist.count);
 }
 
 void test_move_gen_e4(void) {
   const char* fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1";
   Board board = fen_to_board(fen);
 
-  MoveList moves = generate_legal_moves(&board);
-  TEST_ASSERT_EQUAL_INT(20, moves.count);
+  MoveList movelist = generate_legal_moves(&board);
+  TEST_ASSERT_EQUAL_INT(20, movelist.count);
 }
 
 void test_move_gen_pawn_moves(void) {
   const char* fen = "8/pppppppp/8/8/8/8/PPPPPPPP/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){1, 3, 3, 3};
 
-  TEST_ASSERT_EQUAL_INT(16, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(16, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_pawn_double_push_white(void) {
   const char* fen = "8/8/8/8/8/1P6/P1PPPPPP/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(15, moves.count);
+  TEST_ASSERT_EQUAL_INT(15, movelist.count);
 }
 
 void test_move_gen_pawn_double_push_black(void) {
   const char* fen = "8/p1pppppp/1p6/8/8/8/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(15, moves.count);
+  TEST_ASSERT_EQUAL_INT(15, movelist.count);
 }
 
 void test_move_gen_pawn_takes_white(void) {
   const char* fen = "8/8/8/2ppp3/3P4/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){3, 3, 4, 2};
 
-  TEST_ASSERT_EQUAL_INT(2, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(2, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_pawn_takes_black(void) {
   const char* fen = "8/8/8/3p4/2PPP3/8/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){4, 3, 3, 4};
 
-  TEST_ASSERT_EQUAL_INT(2, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(2, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_pawn_takes_en_passant_white(void) {
   const char* fen = "8/8/8/3pP3/8/8/8/8 w - d6 0 3";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){4,4,5,3};
 
-  TEST_ASSERT_EQUAL_INT(2, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(2, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_pawn_takes_en_passant_black(void) {
   const char* fen = "8/8/8/8/3pP3/8/8/8 b - e3 0 3";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {3, 3, 2, 4};
 
-  TEST_ASSERT_EQUAL_INT(2, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(2, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_pawn_pinned_white(void){
   const char* fen = "8/8/8/q3P1K1/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_pawn_pinned_black(void){
   const char* fen = "7B/8/5p2/8/3k4/8/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_knight_centre(void) {
   const char* fen = "8/8/8/4N3/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){4, 4, 5, 6};
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_knight_corner(void) {
   const char* fen = "8/8/8/8/8/8/8/N7 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){0, 0, 1, 2};
 
-  TEST_ASSERT_EQUAL_INT(2, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(2, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_knight_takes_white(void) {
   const char* fen = "8/2p1p3/1p3p2/3N4/1p3p2/2p1p3/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {4, 3, 2, 2};
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_knight_takes_black(void) {
   const char* fen = "8/2P1P3/1P3P2/3n4/1P3P2/2P1P3/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {4, 3, 5, 5};
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_knight_blocked_white(void) {
   const char* fen = "8/2p1p3/1pP1Pp2/1P3P2/1p1N1p2/1Pp1pP2/2P1P3/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(0, moves.count);
+  TEST_ASSERT_EQUAL_INT(0, movelist.count);
 }
 
 void test_move_gen_knight_blocked_black(void) {
   const char* fen = "8/2p1p3/1pP1Pp2/1P1n1P2/1p3p2/1Pp1pP2/2P1P3/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(0, moves.count);
+  TEST_ASSERT_EQUAL_INT(0, movelist.count);
 }
 
 void test_move_gen_knight_pinned_white(void){
   const char* fen = "3r4/8/8/3N4/8/3K4/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_knight_pinned_black(void) {
   const char* fen = "8/8/8/8/3Rn1k1/8/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_bishop_centre(void) {
   const char* fen = "8/8/8/4B3/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){4, 4, 7, 1};
 
-  TEST_ASSERT_EQUAL_INT(13, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(13, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_bishop_corner(void) {
   const char* fen = "B7/8/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){7, 0, 0, 7};
 
-  TEST_ASSERT_EQUAL_INT(7, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(7, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_bishop_pinned_white(void) {
   const char* fen = "3r4/8/8/8/3B4/8/8/3K4 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(5, moves.count);
+  TEST_ASSERT_EQUAL_INT(5, movelist.count);
 }
 
 void test_move_gen_bishop_pinned_black(void) {
   const char* fen = "8/8/8/1k1b2R1/8/8/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_bishop_takes_pieces(void) {
   const char* fen = "7P/2R5/8/4b3/5N2/8/1Q6/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {4, 4, 3, 5};
 
-  TEST_ASSERT_EQUAL_INT(9, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(9, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_rook_centre(void) {
   const char* fen = "8/8/8/4R3/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){4, 4, 4, 7};
 
-  TEST_ASSERT_EQUAL_INT(14, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(14, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_rook_corner(void) {
   const char* fen = "8/8/8/8/8/8/8/7R w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){0, 7, 0, 0};
 
-  TEST_ASSERT_EQUAL_INT(14, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(14, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_rook_pinned_white(void) {
   const char* fen = "8/6b1/8/8/8/2R5/1K6/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(7, moves.count);
+  TEST_ASSERT_EQUAL_INT(7, movelist.count);
 }
 
 void test_move_gen_rook_pinned_black(void) {
   const char* fen = "8/6k1/8/4r3/3Q4/8/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_rook_takes_pieces(void) {
   const char* fen = "3n4/8/8/8/1b1Rq3/8/3p4/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){3, 3, 7, 3};
 
-  TEST_ASSERT_EQUAL_INT(9, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(9, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_queen_centre(void) {
   const char* fen = "8/8/8/4Q3/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move_diag = (Move){4, 4, 6, 6};
   Move test_move_horiz = (Move){4, 4, 0, 4};
 
-  TEST_ASSERT_EQUAL_INT(27, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move_diag));
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move_horiz));
+  TEST_ASSERT_EQUAL_INT(27, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move_diag));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move_horiz));
 }
 
 void test_move_gen_queen_corner(void) {
   const char* fen = "7Q/8/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move_diag = (Move){7, 7, 3, 3};
   Move test_move_horiz = (Move){7, 7, 7, 3};
 
-  TEST_ASSERT_EQUAL_INT(21, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move_diag));
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move_horiz));
+  TEST_ASSERT_EQUAL_INT(21, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move_diag));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move_horiz));
 }
 
 void test_move_gen_queen_pinned_white(void) {
   const char* fen = "8/8/8/8/1KQr4/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_queen_pinned_black(void) {
   const char* fen = "8/8/8/8/1R2q1k1/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(11, moves.count);
+  TEST_ASSERT_EQUAL_INT(11, movelist.count);
 }
 
 void test_move_gen_king_centre(void) {
   const char* fen = "8/8/8/4K3/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move_diag = (Move){4, 4, 5, 5};
   Move test_move_horiz = (Move){4, 4, 3, 4};
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move_diag));
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move_horiz));
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move_diag));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move_horiz));
 }
 
 void test_move_gen_king_corner(void) {
   const char* fen = "K7/8/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move_diag = (Move){7, 0, 6, 1};
   Move test_move_horiz = (Move){7, 0, 7, 1};
 
-  TEST_ASSERT_EQUAL_INT(3, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move_diag));
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move_horiz));
+  TEST_ASSERT_EQUAL_INT(3, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move_diag));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move_horiz));
 }
 
 void test_move_gen_king_takes_white(void) {
   const char* fen = "8/8/2n1n3/3K4/2n1n3/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){4,3,5,4};
 
-  TEST_ASSERT_EQUAL_INT(4, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(4, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_king_takes_black(void) {
   const char* fen = "8/8/2N1N3/3k4/2N1N3/8/8/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){4,3,3,2};
 
-  TEST_ASSERT_EQUAL_INT(4, moves.count);
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_EQUAL_INT(4, movelist.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_king_checked_king_white(void) {
   Board board = fen_to_board("8/8/3k4/3n4/5K2/8/8/6R1 w - - 0 1");
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move move = (Move) {3, 5, 4, 4, 0};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move));
 }
 
 void test_move_gen_king_checked_king_black(void) {
   Board board = fen_to_board("3r4/p1p3pR/1p3kP1/7K/8/5R2/8/8 b - - 6 49");
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move move = (Move){5, 5, 5, 6, 0};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move));
 }
 
 void test_move_gen_castle_k_white(void) {
   const char* fen = "r1bqkbnr/ppp2ppp/2np4/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){0, 4, 0, 6};
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_k_black(void) {
   const char* fen = "r1bqk2r/1ppp1ppp/p1n2n2/2b1p3/B3P3/2NP1N2/PPP2PPP/R1BQK2R b KQkq - 0 6";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 6};
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_q_white(void) {
   const char* fen = "r1bqkb1r/ppp2ppp/2n1pn2/3p4/3P1B2/2N5/PPPQPPPP/R3KBNR w KQkq - 4 5";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 2};
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_q_black(void){
   const char* fen = "r3kbnr/pppqpppp/2n5/3p4/3P2b1/4PN2/PPPNBPPP/R1BQK2R b KQkq - 2 5";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 2};
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_out_of_check_k_white(void) {
   const char* fen = "8/8/8/8/1b6/8/8/4K2Q w K - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 6};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_out_of_check_k_black(void){
   const char* fen = "4k2r/8/8/8/8/4R3/8/8 b k - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 6};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_out_of_check_q_white(void) {
   const char* fen = "8/8/8/8/4q3/8/8/R3K3 w Q - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 2};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_out_of_check_q_black(void) {
   const char* fen = "r3k3/8/5N2/8/8/8/8/8 b q - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 2};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_through_check_k_white(void) {
   const char* fen = "8/8/8/1b6/8/8/8/4K2R w K - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 6};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_through_check_k_black(void){
   const char* fen = "4k2r/8/8/8/8/8/8/5R2 b k - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 6};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_through_check_q_white(void) {
   const char* fen = "8/3q4/8/8/8/8/8/R3K3 w Q - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 2};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_through_check_q_black(void){
   const char* fen = "r3k3/8/1N6/8/8/8/8/8 b q - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 2};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_blocked_k_white(void){
   const char* fen = "8/8/8/8/8/8/8/4KN1R w K - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 6};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_blocked_k_black(void){
   const char* fen = "4kb1r/8/8/8/8/8/8/8 b k - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 6};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_blocked_q_white(void) {
   const char* fen = "8/8/8/8/8/8/8/R2QK3 w Q - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move){0, 4, 0, 2};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_blocked_q_black(void) {
   const char* fen = "r2qk3/8/8/8/8/8/8/8 b q - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 2};
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_k_q_white(void) {
   const char* fen = "8/8/8/8/8/8/8/R3K2R w KQ - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move1 = (Move) {0, 4, 0, 6};
   Move test_move2 = (Move) {0, 4, 0, 2};
 
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move1));
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move2));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move1));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move2));
 }
 
 void test_move_gen_castle_k_blocked_q_white(void) {
   const char* fen = "8/8/8/8/2b5/8/8/R3K2R w KQ - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move1 = (Move) {0, 4, 0, 6};
   Move test_move2 = (Move) {0, 4, 0, 2};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move1));
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move2));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move1));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move2));
 }
 
 void test_move_gen_castle_k_blocked_q_black(void) {
   const char* fen = "r3k2r/8/8/8/8/8/8/5R2 b kq - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move1 = (Move) {7, 4, 7, 6};
   Move test_move2 = (Move) {7, 4, 7, 2};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move1));
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move2));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move1));
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move2));
 }
 
 void test_move_gen_castle_blocked_q_white_near_rook(void){
   const char* fen = "8/8/8/8/8/8/8/RP2K2R w KQ - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 2};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_blocked_q_black_near_rook(void){
   const char* fen = "rp2k2r/8/8/8/8/8/8/8 b kq - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 2};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_k_rook_taken_white(void){
   const char* fen = "rnbqkb1r/pppppppp/8/8/8/8/PPPPPPPP/RNBQK2n w KQkq - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 6, 0};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_k_rook_taken_black(void){
   const char* fen = "r1b1k2N/1pbp2pp/p3p3/4P3/5P2/3p2PB/PP1B3P/2K2R2 b kq - 0 23";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 6, 0};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_q_rook_taken_white(void){
   const char* fen = "rnbqk1nr/pppppppp/8/8/8/8/PPPPPPPP/b3KBNR w KQkq - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {0, 4, 0, 2, 0};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_castle_q_rook_taken_black(void){
   const char* fen = "B3kbnr/p1pppppp/8/8/8/8/PPPPPP1P/RNBQKBNR b KQkq - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {7, 4, 7, 2, 0};
 
-  TEST_ASSERT_FALSE(move_list_contains(moves, test_move));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, test_move));
 }
 
 void test_move_gen_promotion_white(void) {
   const char* fen = "8/4P3/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(4, moves.count);
+  TEST_ASSERT_EQUAL_INT(4, movelist.count);
 }
 
 void test_move_gen_promotion_black(void){
   const char* fen = "8/8/8/8/8/8/1p6/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
-  TEST_ASSERT_EQUAL_INT(4, moves.count);
+  TEST_ASSERT_EQUAL_INT(4, movelist.count);
 }
 
 void test_move_gen_promotion_on_capture_white(void){
   const char* fen = "5n2/4P3/8/8/8/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {6, 4, 7, 5, 5};
 
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_promotion_on_capture_black(void){
   const char* fen = "8/8/8/8/8/8/3p4/2Q5 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move test_move = (Move) {1, 3, 0, 2, -4};
 
-  TEST_ASSERT_TRUE(move_list_contains(moves, test_move));
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
+  TEST_ASSERT_TRUE(movelist_contains(movelist, test_move));
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
 }
 
 void test_move_gen_promotion_blocked_white(void){
   const char* fen = "2b5/2P2k2/8/8/3K4/8/8/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move move1 = (Move){6, 2, 7, 2, 2};
   Move move2 = (Move){6, 2, 7, 2, 3};
   Move move3 = (Move){6, 2, 7, 2, 4};
   Move move4 = (Move){6, 2, 7, 2, 5};
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
-  TEST_ASSERT_FALSE(move_list_contains(moves, move1));
-  TEST_ASSERT_FALSE(move_list_contains(moves, move2));
-  TEST_ASSERT_FALSE(move_list_contains(moves, move3));
-  TEST_ASSERT_FALSE(move_list_contains(moves, move4));
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move1));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move2));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move3));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move4));
 }
 
 void test_move_gen_promotion_blocked_black(void){
   const char* fen = "8/4k3/8/8/8/8/4K1p1/6R1 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
 
   Move move1 = (Move){1, 6, 0, 6, -2};
   Move move2 = (Move){1, 6, 0, 6, -3};
   Move move3 = (Move){1, 6, 0, 6, -4};
   Move move4 = (Move){1, 6, 0, 6, -5};
 
-  TEST_ASSERT_EQUAL_INT(8, moves.count);
-  TEST_ASSERT_FALSE(move_list_contains(moves, move1));
-  TEST_ASSERT_FALSE(move_list_contains(moves, move2));
-  TEST_ASSERT_FALSE(move_list_contains(moves, move3));
-  TEST_ASSERT_FALSE(move_list_contains(moves, move4));
+  TEST_ASSERT_EQUAL_INT(8, movelist.count);
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move1));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move2));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move3));
+  TEST_ASSERT_FALSE(movelist_contains(movelist, move4));
 }
 
 void test_mvv_lva_all_pieces_white(void){
   const char* fen = "8/8/4q3/1r6/3N4/8/2b5/8 w - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
   int scores[256];
-  score_moves(&moves, &board, scores);
+  score_moves(&movelist, &board, scores);
 
   Move move1 = (Move) {3, 3, 5, 4, 0};
   Move move2 = (Move) {3, 3, 4, 1, 0};
   Move move3 = (Move) {3, 3, 1, 2, 0};
 
-  TEST_ASSERT_TRUE(moves_equal(move1, pickmove(&moves, scores, 0)));
-  TEST_ASSERT_TRUE(moves_equal(move2, pickmove(&moves, scores, 1)));
-  TEST_ASSERT_TRUE(moves_equal(move3, pickmove(&moves, scores, 2)));
+  TEST_ASSERT_TRUE(moves_equal(move1, pickmove(&movelist, scores, 0)));
+  TEST_ASSERT_TRUE(moves_equal(move2, pickmove(&movelist, scores, 1)));
+  TEST_ASSERT_TRUE(moves_equal(move3, pickmove(&movelist, scores, 2)));
 }
 
 void test_mvv_lva_all_pieces_black(void){
   const char* fen = "8/8/2Q5/5B2/3n4/8/4R3/8 b - - 0 1";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
   int scores[256];
-  score_moves(&moves, &board, scores);
+  score_moves(&movelist, &board, scores);
 
   Move move1 = (Move) {3, 3, 5, 2, 0};
   Move move2 = (Move) {3, 3, 1, 4, 0};
   Move move3 = (Move) {3, 3, 4, 5, 0};
 
-  TEST_ASSERT_TRUE(moves_equal(move1, pickmove(&moves, scores, 0)));
-  TEST_ASSERT_TRUE(moves_equal(move2, pickmove(&moves, scores, 1)));
-  TEST_ASSERT_TRUE(moves_equal(move3, pickmove(&moves, scores, 2)));
+  TEST_ASSERT_TRUE(moves_equal(move1, pickmove(&movelist, scores, 0)));
+  TEST_ASSERT_TRUE(moves_equal(move2, pickmove(&movelist, scores, 1)));
+  TEST_ASSERT_TRUE(moves_equal(move3, pickmove(&movelist, scores, 2)));
 }
 
 void test_mvv_lva_en_passant_white(void){
   const char* fen = "rnbqkbnr/ppp1pppp/8/2PpP3/8/7N/PP1P1PPP/RNBQKB1R w KQkq d6 0 6";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
   int scores[256];
-  score_moves(&moves, &board, scores);
+  score_moves(&movelist, &board, scores);
 
   Move move1 = (Move) {4, 2, 5, 3, 0};
   Move move2 = (Move) {4, 4, 5, 3, 0};
 
-  TEST_ASSERT_TRUE(moves_equal(move1, pickmove(&moves, scores, 0)) || moves_equal(move2, pickmove(&moves, scores, 0)));
+  TEST_ASSERT_TRUE(moves_equal(move1, pickmove(&movelist, scores, 0)) || moves_equal(move2, pickmove(&movelist, scores, 0)));
 }
 
 void test_mvv_lva_en_passant_black(void){
   const char* fen = "rnbqkbnr/ppppp1p1/8/8/5pPp/8/PPPPPP1P/RNBQKBNR b KQkq g3 0 5";
   Board board = fen_to_board(fen);
-  MoveList moves = generate_legal_moves(&board);
+  MoveList movelist = generate_legal_moves(&board);
   int scores[256];
-  score_moves(&moves, &board, scores);
+  score_moves(&movelist, &board, scores);
 
   Move move1 = (Move) {3, 5, 2, 6, 0};
   Move move2 = (Move) {3, 7, 2, 6, 0};
 
-  TEST_ASSERT_TRUE(moves_equal(move1, pickmove(&moves, scores, 0)) || moves_equal(move2, pickmove(&moves, scores, 0)));
+  TEST_ASSERT_TRUE(moves_equal(move1, pickmove(&movelist, scores, 0)) || moves_equal(move2, pickmove(&movelist, scores, 0)));
 }
 
 int main(void) {

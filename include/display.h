@@ -5,6 +5,6 @@
 #include "board.h"
 
 void print_grid(Board board);
-void print_movelist(MoveList moveList);
+void print_movelist(MoveList movelist);
 
 #endif

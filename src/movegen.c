@@ -7,20 +7,20 @@
 #include "move.h"
 
 static void generate_pawn_moves(int rank, int file, Board* board,
-                                MoveList* move_list);
+                                MoveList* movelist);
 static void generate_knight_moves(int rank, int file, Board* board,
-                                  MoveList* move_list);
+                                  MoveList* movelist);
 static void generate_bishop_moves(int rank, int file, Board* board,
-                                  MoveList* move_list);
+                                  MoveList* movelist);
 static void generate_rook_moves(int rank, int file, Board* board,
-                                MoveList* move_list);
+                                MoveList* movelist);
 static void generate_king_moves(int rank, int file, Board* board,
-                                MoveList* move_list);
+                                MoveList* movelist);
 static void generate_castling_moves(int rank, int file, Board* board,
-                                    MoveList* move_list);
+                                    MoveList* movelist);
 static void generate_promotion_moves(int rank, int file, Board* board,
-                                     MoveList* move_list);
-static void add_move_if_legal(MoveList* move_list, Board* board, Move move);
+                                     MoveList* movelist);
+static void add_move_if_legal(MoveList* movelist, Board* board, Move move);
 
 static const int mvv_lva[7][7] = {
     {0, 0, 0, 0, 0, 0, 0},  // victim None, attacker None, P, N, B, R, Q, K
@@ -33,7 +33,7 @@ static const int mvv_lva[7][7] = {
 };
 
 MoveList generate_legal_moves(Board* board) {
-  MoveList move_list = {.count = 0};
+  MoveList movelist = {.count = 0};
 
   for (int rank = 0; rank < 8; rank++) {
     for (int file = 0; file < 8; file++) {
@@ -49,33 +49,33 @@ MoveList generate_legal_moves(Board* board) {
         case (1): {
           if ((rank == 1 && board->turn == -1) ||
               (rank == 6 && board->turn == 1)) {
-            generate_promotion_moves(rank, file, board, &move_list);
+            generate_promotion_moves(rank, file, board, &movelist);
           } else {
-            generate_pawn_moves(rank, file, board, &move_list);
+            generate_pawn_moves(rank, file, board, &movelist);
           }
           break;
         }
         // Deal with knight case
         case (2):
-          generate_knight_moves(rank, file, board, &move_list);
+          generate_knight_moves(rank, file, board, &movelist);
           break;
         // Deal with bishop case
         case (3):
-          generate_bishop_moves(rank, file, board, &move_list);
+          generate_bishop_moves(rank, file, board, &movelist);
           break;
         // Deal with rook case
         case (4):
-          generate_rook_moves(rank, file, board, &move_list);
+          generate_rook_moves(rank, file, board, &movelist);
           break;
         // Deal with queen case
         case (5):
-          generate_bishop_moves(rank, file, board, &move_list);
-          generate_rook_moves(rank, file, board, &move_list);
+          generate_bishop_moves(rank, file, board, &movelist);
+          generate_rook_moves(rank, file, board, &movelist);
           break;
         // Deal with king case
         case (6):
-          generate_king_moves(rank, file, board, &move_list);
-          generate_castling_moves(rank, file, board, &move_list);
+          generate_king_moves(rank, file, board, &movelist);
+          generate_castling_moves(rank, file, board, &movelist);
           break;
         default:
           break; /* Intentionally unhandled */
@@ -83,11 +83,11 @@ MoveList generate_legal_moves(Board* board) {
     }
   }
 
-  return move_list;
+  return movelist;
 }
 
 static void generate_pawn_moves(int rank, int file, Board* board,
-                                MoveList* move_list) {
+                                MoveList* movelist) {
   Piece piece = board->grid[rank][file];
   int rank_idx = rank + (int)piece;
   if (rank_idx < 0 || rank_idx >= 8) return;
@@ -97,29 +97,29 @@ static void generate_pawn_moves(int rank, int file, Board* board,
   // Take with pawns
   if ((file - 1 >= 0) && ((board->grid[rank_idx][file - 1] * piece) < 0)) {
     temp_move = (Move){rank, file, rank_idx, file - 1, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
   }
   if (((file + 1) < 8) && ((board->grid[rank_idx][file + 1] * piece) < 0)) {
     temp_move = (Move){rank, file, rank_idx, file + 1, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
   }
 
   // Take en passant
   if (board->ep_rank != -1) {
     if ((rank_idx == board->ep_rank) && ((file - 1) == board->ep_file)) {
       temp_move = (Move){rank, file, board->ep_rank, board->ep_file, 0};
-      add_move_if_legal(move_list, board, temp_move);
+      add_move_if_legal(movelist, board, temp_move);
     }
     if ((rank_idx == board->ep_rank) && ((file + 1) == board->ep_file)) {
       temp_move = (Move){rank, file, board->ep_rank, board->ep_file, 0};
-      add_move_if_legal(move_list, board, temp_move);
+      add_move_if_legal(movelist, board, temp_move);
     }
   }
 
   // Push pawns
   if (board->grid[rank_idx][file] == EMPTY) {
     temp_move = (Move){rank, file, rank_idx, file, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
 
     // Double push only from starting rank, and only if single push wasn't
     // blocked
@@ -127,14 +127,14 @@ static void generate_pawn_moves(int rank, int file, Board* board,
       rank_idx = rank + ((int)piece * 2);
       if (board->grid[rank_idx][file] == EMPTY) {
         temp_move = (Move){rank, file, rank_idx, file, 0};
-        add_move_if_legal(move_list, board, temp_move);
+        add_move_if_legal(movelist, board, temp_move);
       }
     }
   }
 }
 
 static void generate_knight_moves(int rank, int file, Board* board,
-                                  MoveList* move_list) {
+                                  MoveList* movelist) {
   Move temp_move;
 
   for (int rank_idx = rank - 2; rank_idx <= rank + 2; rank_idx++) {
@@ -147,14 +147,14 @@ static void generate_knight_moves(int rank, int file, Board* board,
       if (file_idx == file) continue;
       if ((board->grid[rank_idx][file_idx] * board->grid[rank][file]) <= 0) {
         temp_move = (Move){rank, file, rank_idx, file_idx, 0};
-        add_move_if_legal(move_list, board, temp_move);
+        add_move_if_legal(movelist, board, temp_move);
       }
     }
   }
 }
 
 static void generate_bishop_moves(int rank, int file, Board* board,
-                                  MoveList* move_list) {
+                                  MoveList* movelist) {
   int rank_idx = rank + 1;
   int file_idx = file + 1;
   Move temp_move;
@@ -162,7 +162,7 @@ static void generate_bishop_moves(int rank, int file, Board* board,
   while (rank_idx < 8 && file_idx < 8 &&
          (board->grid[rank_idx][file_idx] * board->turn) <= 0) {
     temp_move = (Move){rank, file, rank_idx, file_idx, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
     if (board->grid[rank_idx][file_idx] != EMPTY) break;
     rank_idx++;
     file_idx++;
@@ -173,7 +173,7 @@ static void generate_bishop_moves(int rank, int file, Board* board,
   while (rank_idx < 8 && file_idx >= 0 &&
          (board->grid[rank_idx][file_idx] * board->turn) <= 0) {
     temp_move = (Move){rank, file, rank_idx, file_idx, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
     if (board->grid[rank_idx][file_idx] != EMPTY) break;
     rank_idx++;
     file_idx--;
@@ -184,7 +184,7 @@ static void generate_bishop_moves(int rank, int file, Board* board,
   while (rank_idx >= 0 && file_idx < 8 &&
          (board->grid[rank_idx][file_idx] * board->turn) <= 0) {
     temp_move = (Move){rank, file, rank_idx, file_idx, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
     if (board->grid[rank_idx][file_idx] != EMPTY) break;
     rank_idx--;
     file_idx++;
@@ -195,7 +195,7 @@ static void generate_bishop_moves(int rank, int file, Board* board,
   while (rank_idx >= 0 && file_idx >= 0 &&
          (board->grid[rank_idx][file_idx] * board->turn) <= 0) {
     temp_move = (Move){rank, file, rank_idx, file_idx, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
     if (board->grid[rank_idx][file_idx] != EMPTY) break;
     rank_idx--;
     file_idx--;
@@ -203,13 +203,13 @@ static void generate_bishop_moves(int rank, int file, Board* board,
 }
 
 static void generate_rook_moves(int rank, int file, Board* board,
-                                MoveList* move_list) {
+                                MoveList* movelist) {
   int file_idx = file + 1;
   Move temp_move;
 
   while (file_idx < 8 && (board->grid[rank][file_idx] * board->turn) <= 0) {
     temp_move = (Move){rank, file, rank, file_idx, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
     if (board->grid[rank][file_idx] != EMPTY) break;
     file_idx++;
   }
@@ -217,7 +217,7 @@ static void generate_rook_moves(int rank, int file, Board* board,
   file_idx = file - 1;
   while (file_idx >= 0 && (board->grid[rank][file_idx] * board->turn) <= 0) {
     temp_move = (Move){rank, file, rank, file_idx, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
     if (board->grid[rank][file_idx] != EMPTY) break;
     file_idx--;
   }
@@ -225,7 +225,7 @@ static void generate_rook_moves(int rank, int file, Board* board,
   int rank_idx = rank + 1;
   while (rank_idx < 8 && (board->grid[rank_idx][file] * board->turn) <= 0) {
     temp_move = (Move){rank, file, rank_idx, file, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
     if (board->grid[rank_idx][file] != EMPTY) break;
     rank_idx++;
   }
@@ -233,14 +233,14 @@ static void generate_rook_moves(int rank, int file, Board* board,
   rank_idx = rank - 1;
   while (rank_idx >= 0 && (board->grid[rank_idx][file] * board->turn) <= 0) {
     temp_move = (Move){rank, file, rank_idx, file, 0};
-    add_move_if_legal(move_list, board, temp_move);
+    add_move_if_legal(movelist, board, temp_move);
     if (board->grid[rank_idx][file] != EMPTY) break;
     rank_idx--;
   }
 }
 
 static void generate_king_moves(int rank, int file, Board* board,
-                                MoveList* move_list) {
+                                MoveList* movelist) {
   Move temp_move;
 
   for (int rank_idx = rank - 1; rank_idx <= rank + 1; rank_idx++) {
@@ -250,14 +250,14 @@ static void generate_king_moves(int rank, int file, Board* board,
       if (file_idx == file && rank_idx == rank) continue;
       if ((board->grid[rank_idx][file_idx] * board->grid[rank][file]) <= 0) {
         temp_move = (Move){rank, file, rank_idx, file_idx, 0};
-        add_move_if_legal(move_list, board, temp_move);
+        add_move_if_legal(movelist, board, temp_move);
       }
     }
   }
 }
 
 static void generate_castling_moves(int rank, int file, Board* board,
-                                    MoveList* move_list) {
+                                    MoveList* movelist) {
   // Prevent castle out of check
   if (is_in_check(*board)) return;
 
@@ -287,7 +287,7 @@ static void generate_castling_moves(int rank, int file, Board* board,
 
     if (!move_through_check) {
       Move castling_move = (Move){rank, file, rank, file + 2, 0};
-      add_move_if_legal(move_list, board, castling_move);
+      add_move_if_legal(movelist, board, castling_move);
     }
   }
 
@@ -313,41 +313,41 @@ static void generate_castling_moves(int rank, int file, Board* board,
 
     if (!move_through_check) {
       Move castling_move = (Move){rank, file, rank, file - 2, 0};
-      add_move_if_legal(move_list, board, castling_move);
+      add_move_if_legal(movelist, board, castling_move);
     }
   }
 }
 
 static void generate_promotion_moves(int rank, int file, Board* board,
-                                     MoveList* move_list) {
+                                     MoveList* movelist) {
   Move temp_move;
   int rank_idx = rank + board->turn;
 
   for (int promo_piece = 2; promo_piece < 6; promo_piece++) {
     temp_move = (Move){rank, file, rank_idx, file, promo_piece * board->turn};
     if (board->grid[rank_idx][file] == EMPTY) {
-      add_move_if_legal(move_list, board, temp_move);
+      add_move_if_legal(movelist, board, temp_move);
     }
 
     if ((file - 1 >= 0) &&
         ((board->grid[rank_idx][file - 1] * board->turn) < 0)) {
       temp_move =
           (Move){rank, file, rank_idx, file - 1, promo_piece * board->turn};
-      add_move_if_legal(move_list, board, temp_move);
+      add_move_if_legal(movelist, board, temp_move);
     }
     if (((file + 1) < 8) &&
         ((board->grid[rank_idx][file + 1] * board->turn) < 0)) {
       temp_move =
           (Move){rank, file, rank_idx, file + 1, promo_piece * board->turn};
-      add_move_if_legal(move_list, board, temp_move);
+      add_move_if_legal(movelist, board, temp_move);
     }
   }
 }
 
-static void add_move_if_legal(MoveList* move_list, Board* board, Move move) {
+static void add_move_if_legal(MoveList* movelist, Board* board, Move move) {
   Piece piece_taken = apply_move(board, move);
   if (!is_in_check(*board)) {
-    move_list->moves[move_list->count++] = move;
+    movelist->moves[movelist->count++] = move;
   }
   revert_move(board, move, piece_taken);
 }
