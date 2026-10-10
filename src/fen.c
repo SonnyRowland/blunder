@@ -37,7 +37,7 @@ Board fen_to_board(const char* fen) {
     if (fen[i] == ' ') break;
 
     if (fen[i] >= 'A') {
-      board.grid[rank][file] = fen_to_piece[fen[i]];
+      board.grid[rank][file] = fen_to_piece[(unsigned char)fen[i]];
       file++;
     } else if ('/' < fen[i] && fen[i] < 'A') {
       empty_squares = fen[i] - '0';

@@ -48,7 +48,7 @@ void bench(void) {
   uint64_t nodecount = 0;
   int64_t totaltime_ns = 0;
 
-  for (int i = 0; i < NUM_BENCH_FENS; i++) {
+  for (size_t i = 0; i < NUM_BENCH_FENS; i++) {
     Board board = fen_to_board(bench_fens[i]);
     Move bestmove;
 

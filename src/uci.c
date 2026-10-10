@@ -42,7 +42,7 @@ void dispatch(char* buf, FILE* out, Board* board, Move* bestmove) {
   if (args)
     while (*args == ' ') args++;
 
-  for (int i = 0; i < sizeof(commands) / sizeof(Command); i++) {
+  for (size_t i = 0; i < sizeof(commands) / sizeof(Command); i++) {
     // TODO: Fix empty buf calling all handler funcs
     if (strncmp(buf, commands[i].cmd, cnt) == 0) {
       commands[i].fn(args, out, board, bestmove);
@@ -72,6 +72,7 @@ static void handle_isready(char* args, FILE* out, Board* board,
 
 static void handle_position(char* args, FILE* out, Board* board,
                             Move* bestmove) {
+  (void)out;
   (void)bestmove;
 
   if (args) {

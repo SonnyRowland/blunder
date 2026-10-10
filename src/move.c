@@ -164,7 +164,7 @@ Move move_from_lan(const char* lan) {
   move.promotion = 0;
 
   if (strlen(lan) == 5) {
-    move.promotion = fen_to_piece[lan[4]];
+    move.promotion = fen_to_piece[(unsigned char)lan[4]];
 
     if (move.to_rank == 7) move.promotion *= -1;
   }
