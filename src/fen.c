@@ -1,4 +1,3 @@
-#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,7 +7,7 @@
 const char start_pos[] =
     "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-const Piece fen_to_piece[128] = {
+const Piece char_to_piece[128] = {
     ['k'] = B_KING,   ['q'] = B_QUEEN, ['r'] = B_ROOK,  ['b'] = B_BISHOP,
     ['n'] = B_KNIGHT, ['p'] = B_PAWN,  ['P'] = W_PAWN,  ['N'] = W_KNIGHT,
     ['B'] = W_BISHOP, ['R'] = W_ROOK,  ['Q'] = W_QUEEN, ['K'] = W_KING,
@@ -24,90 +23,63 @@ const char piece_to_fen[13] = {
 };
 
 Board fen_to_board(const char* fen) {
-  Board board;
-  int fen_length = strlen(fen);
+  const char* p = fen;
+  Board board = {0};
+  int rank = 7, file = 0;
 
-  int rank = 7;
-  int file = 0;
-  int empty_squares;
-  int i = 0;
-
-  // Fill grid with pieces
-  for (; i < fen_length; i++) {
-    if (fen[i] == ' ') break;
-
-    if (fen[i] >= 'A') {
-      board.grid[rank][file] = fen_to_piece[(unsigned char)fen[i]];
-      file++;
-    } else if ('/' < fen[i] && fen[i] < 'A') {
-      empty_squares = fen[i] - '0';
-
-      for (int j = 0; j < empty_squares; j++) {
-        board.grid[rank][file] = EMPTY;
-        file++;
-      }
-    } else {
+  // Parse board
+  for (; *p && *p != ' '; p++) {
+    char c = *p;
+    if (c == '/') {
       rank--;
       file = 0;
+    } else if (c >= '1' && c <= '8') {
+      int end = file + c - '0';
+      for (; file < end; file++) {
+        board.grid[rank][file] = EMPTY;
+      }
+    } else {
+      board.grid[rank][file] = char_to_piece[(unsigned char)c];
+      file++;
     }
   }
 
-  // Extract game meta data (turn, castling rights, move count etc.)
-  if (fen[++i] == 'w') {
-    board.turn = 1;
-  } else {
-    board.turn = -1;
-  }
-  i++;
+  // Parse game state
+  char side, castling[5], ep[3];
+  int halfmove, fullmove;
+
+  sscanf(p, " %c %s %s %i %i", &side, castling, ep, &halfmove, &fullmove);
+
+  board.turn = side == 'w' ? TURN_WHITE : TURN_BLACK;
 
   board.castle_wk = board.castle_wq = board.castle_bk = board.castle_bq = 0;
 
-  if (fen[i++] != '-') {
-    while (fen[i] != ' ') {
-      switch (fen[i]) {
-        case 'K':
-          board.castle_wk = 1;
-          break;
-        case 'Q':
-          board.castle_wq = 1;
-          break;
-        case 'k':
-          board.castle_bk = 1;
-          break;
-        case 'q':
-          board.castle_bq = 1;
-          break;
-        default:
-          break;
-      }
-      i++;
+  for (const char* c = castling; *c != '\0'; c++) {
+    switch (*c) {
+      case 'K':
+        board.castle_wk = 1;
+        break;
+      case 'Q':
+        board.castle_wq = 1;
+        break;
+      case 'k':
+        board.castle_bk = 1;
+        break;
+      case 'q':
+        board.castle_bq = 1;
+        break;
     }
   }
 
-  // Google en passant
-  if (fen[++i] != '-') {
-    board.ep_file = fen[i] - 'a';
-    board.ep_rank = fen[++i] - '1';
-  } else {
-    board.ep_file = board.ep_rank = -1;
+  board.ep_file = board.ep_rank = -1;
+
+  if (strcmp(ep, "-") != 0) {
+    board.ep_file = ep[0] - 'a';
+    board.ep_rank = ep[1] - '1';
   }
 
-  i++;
-
-  board.halfmove_clock = fen[++i] - '0';
-
-  if (fen[++i] != ' ') {
-    board.halfmove_clock = (10 * board.halfmove_clock) + (fen[i++] - '0');
-  }
-
-  i++;
-
-  board.fullmove_count = 0;
-
-  while (fen_length - i > 0) {
-    board.fullmove_count += pow(10, fen_length - i - 1) * (fen[i] - '0');
-    i++;
-  }
+  board.halfmove_clock = halfmove;
+  board.fullmove_count = fullmove;
 
   return board;
 }
