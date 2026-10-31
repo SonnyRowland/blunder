@@ -18,9 +18,3 @@ build/artefacts/*
 assets/engine-interface.txt
 .DS_Store
 .vscode/
-
-
-# Personal files
-BACKLOG.md
-engine-interface.txt
-/logs
