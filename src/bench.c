@@ -68,29 +68,3 @@ void bench(void) {
   printf("Nodes per second: %.0f\n",
          totaltime_ms == 0 ? 0 : nodecount / totaltime_ms * 1000);
 }
-
-void bench_perft(Board* board, int depth) {
-  struct timespec begin;
-  struct timespec end;
-
-  int64_t best = INT64_MAX;
-  uint64_t leafnodes = 0;
-
-  for (int i = 0; i < BENCH_PERFT_ITERS; i++) {
-    clock_gettime(CLOCK_MONOTONIC, &begin);
-    leafnodes = perft(board, depth, true);
-    clock_gettime(CLOCK_MONOTONIC, &end);
-
-    int64_t ns = elapsed_ns(&begin, &end);
-    if (ns < best) {
-      best = ns;
-    }
-  }
-
-  double ms = best / 1e6;
-  double knps = ms == 0 ? 0 : leafnodes / ms;
-
-  printf("Depth %i searched over %i iterations\n", depth, BENCH_PERFT_ITERS);
-  printf("Best: %" PRIu64 " nodes searched in %.0fms: %.0f knps\n", leafnodes,
-         ms, knps);
-}
