@@ -69,6 +69,18 @@ void test_dispatch_isready(void){
   TEST_ASSERT_NOT_NULL(strstr(res, "readyok"));
 }
 
+void test_dispatch_empty_buffer(void){
+  char res[256] = {0};
+  char* buf = "\n";
+  FILE *out = fmemopen(res, sizeof(res), "w");
+
+  dispatch(buf, out, &(Board){0}, &(Move){0});
+
+  fclose(out);
+
+  TEST_ASSERT_EQUAL_STRING("", res);
+}
+
 void test_position_startpos(void){
   char buf[] = "position startpos\n";
   Board board = {0};
@@ -211,6 +223,8 @@ int main(void){
   RUN_TEST(test_go_infinite_obvious_move);
   RUN_TEST(test_stop_with_no_active_search);
   RUN_TEST(test_back_to_back_go_movetime);
+
+  RUN_TEST(test_dispatch_empty_buffer);
   
   return UNITY_END();
 }

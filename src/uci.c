@@ -36,6 +36,7 @@ void dispatch(char* buf, FILE* out, Board* board, Move* bestmove) {
 
   // Get command from buffer
   while (tmp[cnt] != ' ' && tmp[cnt] != '\n' && tmp[cnt] != '\0') cnt++;
+  if (cnt == 0) return;
 
   // Get arguments from buffer
   char* args = strchr(buf, ' ');
@@ -43,7 +44,6 @@ void dispatch(char* buf, FILE* out, Board* board, Move* bestmove) {
     while (*args == ' ') args++;
 
   for (size_t i = 0; i < sizeof(commands) / sizeof(Command); i++) {
-    // TODO: Fix empty buf calling all handler funcs
     if (strncmp(buf, commands[i].cmd, cnt) == 0) {
       commands[i].fn(args, out, board, bestmove);
       break;
